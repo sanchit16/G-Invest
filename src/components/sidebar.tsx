@@ -28,15 +28,17 @@ export default function Sidebar() {
         </div>
         <nav className="flex-1 p-4 space-y-2">
           {navItems.map((item) => (
-            <Link key={item.label} href={item.href} legacyBehavior passHref>
-              <Button
-                variant={pathname === item.href ? 'default' : 'ghost'}
-                className="w-full justify-start gap-3 text-base"
-              >
+            <Button
+              key={item.label}
+              variant={pathname === item.href ? 'default' : 'ghost'}
+              className="w-full justify-start gap-3 text-base"
+              asChild
+            >
+              <Link href={item.href}>
                 <item.icon className="h-5 w-5" />
                 {item.label}
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           ))}
         </nav>
         <div className="p-4 border-t mt-auto">
