@@ -12,20 +12,15 @@ const chartData = [{ name: 'Readiness', value: 75 }];
 export default function ReadinessCard() {
   const score = chartData[0].value;
   let scoreColor = '';
-  let scoreColorClass = '';
-
+  
   if (score >= 80) {
     scoreColor = 'hsl(var(--secondary))';
-    scoreColorClass = 'bg-secondary';
   } else if (score >= 60) {
     scoreColor = 'hsl(var(--chart-3))';
-    scoreColorClass = 'bg-chart-3';
   } else if (score >= 40) {
     scoreColor = 'hsl(var(--chart-5))';
-    scoreColorClass = 'bg-chart-5';
   } else {
     scoreColor = 'hsl(var(--destructive))';
-    scoreColorClass = 'bg-destructive';
   }
 
   const coloredChartData = [{ ...chartData[0], fill: scoreColor }];
@@ -36,10 +31,7 @@ export default function ReadinessCard() {
         <TooltipTrigger asChild>
           <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
             <CardHeader className="items-center pb-2">
-              <div className="flex items-center justify-between w-full">
                 <CardTitle className="text-sm font-medium">Market Readiness</CardTitle>
-                <div className={cn("h-5 w-5 rounded-full", scoreColorClass)} />
-              </div>
               <CardDescription className="text-xs">Your investment knowledge score.</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col items-center justify-center pt-2">
@@ -66,7 +58,6 @@ export default function ReadinessCard() {
                   <span className="text-xl font-bold text-muted-foreground mt-2">/100</span>
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground mt-2 px-4 text-center"></p>
             </CardContent>
           </Card>
         </TooltipTrigger>
