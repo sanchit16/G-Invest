@@ -54,8 +54,8 @@ type StockData = {
 
 const stocksData: StockData[] = [
   {
-    ticker: 'GGL',
-    name: 'Google',
+    ticker: 'GOOG',
+    name: 'Alphabet',
     price: 175.43,
     change: 1.25,
     value: 25061.44,
@@ -91,7 +91,7 @@ const stocksData: StockData[] = [
     },
   },
   {
-    ticker: 'APPL',
+    ticker: 'AAPL',
     name: 'Apple Inc.',
     price: 214.29,
     change: -0.78,
@@ -128,8 +128,8 @@ const stocksData: StockData[] = [
     },
   },
   {
-    ticker: 'TSLL',
-    name: 'Tesla Corp',
+    ticker: 'TSLA',
+    name: 'Tesla Inc',
     price: 183.01,
     change: 2.51,
     value: 15190.12,
