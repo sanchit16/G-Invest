@@ -57,7 +57,7 @@ export default function QuizClient() {
     } catch (e: any) {
       console.error(e);
       if (e.message?.includes('SERVICE_DISABLED')) {
-        setError('The Quiz Generator is being set up. This can take a few minutes. Please try again shortly.');
+        setError('The Generative Language API is disabled. Please enable it in your Google Cloud project console and try again in a few minutes.');
       } else {
         setError('The AI failed to generate a quiz for this topic. Please try a different topic.');
       }
@@ -141,7 +141,7 @@ export default function QuizClient() {
       {error && (
          <Alert variant="destructive" className="mt-6">
             <Bot className="h-4 w-4" />
-            <AlertTitle>Error Generating Quiz</AlertTitle>
+            <AlertTitle>Action Required</AlertTitle>
             <AlertDescription>
               {error}
             </AlertDescription>
