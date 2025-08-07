@@ -8,7 +8,7 @@ import { BookOpen, Bot, Sparkles } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { aiFinancialTutor, type AiFinancialTutorOutput } from '@/ai/flows/ai-financial-tutor';
 import { Skeleton } from '../ui/skeleton';
@@ -60,10 +60,11 @@ export default function AITutorClient() {
 
   function onSubmit(values: FormValues) {
     generateCurriculum(values.topic);
+    form.reset();
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -86,7 +87,6 @@ export default function AITutorClient() {
                     <FormControl>
                       <Input placeholder="e.g., 'The Intelligent Investor', 'value investing', 'crypto basics'" {...field} />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -99,61 +99,64 @@ export default function AITutorClient() {
         </CardContent>
       </Card>
 
-      {isLoading && (
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-primary">
-              <Bot className="h-6 w-6 animate-pulse" />
-              AI Tutor is building your curriculum...
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-          </CardContent>
-        </Card>
-      )}
+      <div className="mt-6">
+        {isLoading && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-primary">
+                <Bot className="h-6 w-6 animate-pulse" />
+                AI Tutor is building your curriculum...
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <Skeleton key={i} className="h-12 w-full" />
+              ))}
+            </CardContent>
+          </Card>
+        )}
 
-      {error && (
-         <Alert variant="destructive" className="mt-6">
-            <Bot className="h-4 w-4" />
-            <AlertTitle>Setup in Progress</AlertTitle>
-            <AlertDescription>
-              {error}
-            </AlertDescription>
-          </Alert>
-      )}
+        {error && (
+           <Alert variant="destructive">
+              <Bot className="h-4 w-4" />
+              <AlertTitle>Setup in Progress</AlertTitle>
+              <AlertDescription>
+                {error}
+              </AlertDescription>
+            </Alert>
+        )}
 
-      {curriculum && !error && (
-        <Card className="mt-6 animate-in fade-in">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-primary">
-              <Bot className="h-6 w-6" />
-              <span className="capitalize">Your Curriculum on "{currentTopic}"</span>
-            </CardTitle>
-             <CardDescription>
-              Expand each section below to view your lesson.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Accordion type="single" collapsible className="w-full">
-                {curriculum.lessons.map((lesson, index) => (
-                    <AccordionItem value={`item-${index}`} key={index}>
-                        <AccordionTrigger className="text-lg font-semibold hover:no-underline text-left">
-                          {lesson.title}
-                        </AccordionTrigger>
-                        <AccordionContent className="prose dark:prose-invert max-w-none">
-                          <p className="whitespace-pre-wrap">{lesson.content}</p>
-                        </AccordionContent>
-                    </AccordionItem>
-                ))}
-            </Accordion>
-          </CardContent>
-        </Card>
-      )}
+        {curriculum && !error && (
+          <Card className="animate-in fade-in">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-primary">
+                <Bot className="h-6 w-6" />
+                <span className="capitalize">Your Curriculum on "{currentTopic}"</span>
+              </CardTitle>
+               <CardDescription>
+                Expand each section below to view your lesson.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Accordion type="single" collapsible className="w-full">
+                  {curriculum.lessons.map((lesson, index) => (
+                      <AccordionItem value={`item-${index}`} key={index}>
+                          <AccordionTrigger className="text-lg font-semibold hover:no-underline text-left">
+                            <div className="flex-1 text-left">{lesson.title}</div>
+                            <div className="text-sm font-normal text-muted-foreground ml-4 shrink-0">
+                                1 lecture &bull; {lesson.duration}
+                            </div>
+                          </AccordionTrigger>
+                          <AccordionContent className="prose dark:prose-invert max-w-none">
+                            <p className="whitespace-pre-wrap">{lesson.content}</p>
+                          </AccordionContent>
+                      </AccordionItem>
+                  ))}
+              </Accordion>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }

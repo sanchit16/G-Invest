@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bot, BookOpen, HelpCircle, LayoutDashboard, Search, DollarSign } from 'lucide-react';
+import { Bot, BookOpen, HelpCircle, LayoutDashboard, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -11,7 +11,6 @@ const navItems = [
   { href: '/', icon: LayoutDashboard, label: 'Dashboard' },
   { href: '/lessons', icon: BookOpen, label: 'AI Tutor' },
   { href: '/quizzes', icon: HelpCircle, label: 'Quizzes' },
-  { href: '/search', icon: Search, label: 'Concept Search' },
 ];
 
 export default function Sidebar() {
@@ -30,7 +29,7 @@ export default function Sidebar() {
           {navItems.map((item) => (
             <Button
               key={item.label}
-              variant={pathname === item.href ? 'default' : 'ghost'}
+              variant={(pathname === item.href || (item.href === '/lessons' && pathname === '/search')) ? 'default' : 'ghost'}
               className="w-full justify-start gap-3 text-base"
               asChild
             >

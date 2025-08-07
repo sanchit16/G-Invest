@@ -17,6 +17,7 @@ export type AiFinancialTutorInput = z.infer<typeof AiFinancialTutorInputSchema>;
 const LessonSchema = z.object({
   title: z.string().describe('The title of the lesson.'),
   content: z.string().describe('The detailed content of the lesson.'),
+  duration: z.string().describe('The estimated time to complete the lesson (e.g., "42min", "1hr 18min").'),
 });
 
 const AiFinancialTutorOutputSchema = z.object({
@@ -44,7 +45,7 @@ const prompt = ai.definePrompt({
     Base the lessons on general, fundamental principles of investing for beginners.
     {{/if}}
 
-    Create a list of 5-7 lessons. Each lesson should have a clear title and a detailed content body. The content should be presented in a way that is easy for a beginner to understand.
+    Create a list of 5-7 lessons. Each lesson should have a clear title, a detailed content body, and an estimated duration for completion.
     `,
 });
 
