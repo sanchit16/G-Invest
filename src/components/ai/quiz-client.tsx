@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { generateQuiz, type AiQuizGeneratorOutput } from '@/ai/flows/ai-quiz-generator';
 import { Skeleton } from '../ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
 const formSchema = z.object({
   topic: z.string().min(3, 'Topic must be at least 3 characters.'),
@@ -23,6 +24,7 @@ type FormValues = z.infer<typeof formSchema>;
 export default function QuizClient() {
   const [quiz, setQuiz] = useState<AiQuizGeneratorOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const form = useForm<FormValues>({
@@ -35,16 +37,21 @@ export default function QuizClient() {
   async function onSubmit(values: FormValues) {
     setIsLoading(true);
     setQuiz(null);
+    setError(null);
     try {
       const result = await generateQuiz(values);
       setQuiz(result);
-    } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error generating quiz',
-        description: 'An unexpected error occurred. Please try again.',
-        variant: 'destructive',
-      });
+    } catch (e: any) {
+      console.error(e);
+      if (e.message?.includes('SERVICE_DISABLED')) {
+        setError('The Quiz Generator is being set up. This can take a few minutes. Please try again shortly.');
+      } else {
+        toast({
+          title: 'Error generating quiz',
+          description: 'An unexpected error occurred. Please try again.',
+          variant: 'destructive',
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -103,8 +110,18 @@ export default function QuizClient() {
           </CardContent>
         </Card>
       )}
+      
+      {error && (
+         <Alert variant="destructive" className="mt-6">
+            <Bot className="h-4 w-4" />
+            <AlertTitle>Setup in Progress</AlertTitle>
+            <AlertDescription>
+              {error}
+            </AlertDescription>
+          </Alert>
+      )}
 
-      {quiz && (
+      {quiz && !error && (
         <Card className="mt-6 animate-in fade-in">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-primary">

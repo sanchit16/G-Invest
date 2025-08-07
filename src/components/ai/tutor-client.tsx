@@ -8,25 +8,32 @@ import { useToast } from '@/hooks/use-toast';
 import { aiFinancialTutor, type AiFinancialTutorOutput } from '@/ai/flows/ai-financial-tutor';
 import { Skeleton } from '../ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
 export default function AITutorClient() {
   const [curriculum, setCurriculum] = useState<AiFinancialTutorOutput | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
     async function generateCurriculum() {
       setIsLoading(true);
+      setError(null);
       try {
         const result = await aiFinancialTutor({});
         setCurriculum(result);
-      } catch (error) {
-        console.error(error);
-        toast({
-          title: 'Error generating curriculum',
-          description: 'An unexpected error occurred. Please try again.',
-          variant: 'destructive',
-        });
+      } catch (e: any) {
+        console.error(e);
+        if (e.message?.includes('SERVICE_DISABLED')) {
+          setError('The AI Tutor is being set up. This can take a few minutes. Please try again shortly.');
+        } else {
+          toast({
+            title: 'Error generating curriculum',
+            description: 'An unexpected error occurred. Please try again.',
+            variant: 'destructive',
+          });
+        }
       } finally {
         setIsLoading(false);
       }
@@ -66,7 +73,17 @@ export default function AITutorClient() {
         </Card>
       )}
 
-      {curriculum && (
+      {error && (
+         <Alert variant="destructive" className="mt-6">
+            <Bot className="h-4 w-4" />
+            <AlertTitle>Setup in Progress</AlertTitle>
+            <AlertDescription>
+              {error}
+            </AlertDescription>
+          </Alert>
+      )}
+
+      {curriculum && !error && (
         <Card className="mt-6 animate-in fade-in">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-primary">
