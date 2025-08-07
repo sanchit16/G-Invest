@@ -66,7 +66,6 @@ export default function ReadinessCard() {
                 </ChartContainer>
                 <div
                   className="absolute inset-0 flex items-center justify-center text-4xl font-bold"
-                  style={{ color: scoreColor }}
                 >
                   {score}
                   <span className="text-2xl font-bold ml-1">%</span>
