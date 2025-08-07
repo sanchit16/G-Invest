@@ -1,7 +1,8 @@
+
 'use server';
 
 /**
- * @fileOverview AI agent that provides explanations for financial concepts.
+ * @fileOverview AI agent that provides explanations for financial concepts based on a given context.
  *
  * - financialConceptSearch - A function that allows searching for financial concepts and receiving AI-generated explanations.
  * - FinancialConceptSearchInput - The input type for the financialConceptSearch function.
@@ -13,6 +14,7 @@ import {z} from 'genkit';
 
 const FinancialConceptSearchInputSchema = z.object({
   concept: z.string().describe('The financial concept to search for.'),
+  context: z.string().describe('The knowledge base text the AI should use to find the explanation.'),
 });
 export type FinancialConceptSearchInput = z.infer<typeof FinancialConceptSearchInputSchema>;
 
@@ -29,7 +31,12 @@ const prompt = ai.definePrompt({
   name: 'financialConceptSearchPrompt',
   input: {schema: FinancialConceptSearchInputSchema},
   output: {schema: FinancialConceptSearchOutputSchema},
-  prompt: `You are a financial expert. Explain the following financial concept in a clear and concise manner:
+  prompt: `You are a financial expert. Explain the following financial concept in a clear and concise manner, using *only* the provided context below. If the answer is not found in the context, state that you cannot answer the question with the provided information.
+
+Context:
+---
+{{{context}}}
+---
 
 Concept: {{{concept}}}
 
