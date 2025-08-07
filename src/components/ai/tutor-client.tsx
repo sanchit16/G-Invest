@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { BookOpen, Bot, Sparkles } from 'lucide-react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
 import { aiFinancialTutor, type AiFinancialTutorOutput } from '@/ai/flows/ai-financial-tutor';
 import { Skeleton } from '../ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
@@ -14,7 +13,6 @@ export default function AITutorClient() {
   const [curriculum, setCurriculum] = useState<AiFinancialTutorOutput | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
 
   useEffect(() => {
     async function generateCurriculum() {
@@ -35,7 +33,7 @@ export default function AITutorClient() {
       }
     }
     generateCurriculum();
-  }, [toast]);
+  }, []);
 
   return (
     <div className="max-w-3xl mx-auto">
