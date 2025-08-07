@@ -1,77 +1,89 @@
 
 "use client";
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { HelpCircle, Bot, Sparkles, CheckCircle, XCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { HelpCircle, CheckCircle, XCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { generateQuiz, type AiQuizGeneratorOutput } from '@/ai/flows/ai-quiz-generator';
-import { Skeleton } from '../ui/skeleton';
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { type AiQuizGeneratorOutput } from '@/ai/flows/ai-quiz-generator';
+import { Alert, AlertDescription } from '../ui/alert';
 import { Separator } from '../ui/separator';
 import { cn } from '@/lib/utils';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible';
 
-const formSchema = z.object({
-  topic: z.string().min(3, 'Topic must be at least 3 characters.'),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
 type AnswerState = 'unanswered' | 'correct' | 'incorrect';
+
+const hardcodedQuiz: AiQuizGeneratorOutput = {
+  quizTitle: "Stock Market Fundamentals",
+  questions: [
+    {
+      questionText: "What is the primary purpose for companies to issue shares on the stock market?",
+      options: [
+        "To pay their employees",
+        "To get a loan from the bank",
+        "To raise capital and expand their business",
+        "To lower their taxes"
+      ],
+      correctAnswer: "To raise capital and expand their business",
+      explanation: "Companies issue shares on the stock market to raise capital for business expansion, research and development, and other corporate initiatives."
+    },
+    {
+      questionText: "In the United States, which organization regulates companies that want to sell shares to the public?",
+      options: [
+        "The Federal Reserve (The Fed)",
+        "The New York Stock Exchange (NYSE)",
+        "The Financial Industry Regulatory Authority (FINRA)",
+        "The Securities and Exchange Commission (SEC)"
+      ],
+      correctAnswer: "The Securities and Exchange Commission (SEC)",
+      explanation: "In the U.S., the Securities and Exchange Commission (SEC) regulates companies that want to sell shares to the public, requiring them to register and provide periodic disclosures."
+    },
+    {
+      questionText: "What is a stock exchange?",
+      options: [
+        "A type of government bond",
+        "A private club for wealthy investors",
+        "An organized and regulated venue where stocks are bought and sold",
+        "A company's annual shareholder meeting"
+      ],
+      correctAnswer: "An organized and regulated venue where stocks are bought and sold",
+      explanation: "Stock exchanges are organized and regulated 'places' (today mostly virtual) where stocks and other securities are bought and sold, playing a crucial role in the financial system."
+    },
+    {
+      questionText: "What is the key difference between an investor and a trader?",
+      options: [
+        "Investors use brokers, while traders do not.",
+        "Traders focus on short-term market volatility, while investors focus on long-term growth.",
+        "Investors can only buy stocks, while traders can buy bonds and commodities.",
+        "There is no difference; the terms are interchangeable."
+      ],
+      correctAnswer: "Traders focus on short-term market volatility, while investors focus on long-term growth.",
+      explanation: "Investors generally approach the market from a long-term perspective, expecting value to grow over time. Traders take a more short-term approach, aiming to capitalize on the market’s volatility."
+    }
+  ]
+};
+
 
 export default function QuizClient() {
   const [quiz, setQuiz] = useState<AiQuizGeneratorOutput | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
   const [answerStates, setAnswerStates] = useState<Record<number, AnswerState>>({});
   const [showResults, setShowResults] = useState(false);
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      topic: '',
-    },
-  });
-
-  const resetQuizState = () => {
-    setQuiz(null);
-    setSelectedAnswers({});
-    setAnswerStates({});
-    setShowResults(false);
-  }
-
-  async function onSubmit(values: FormValues) {
-    setIsLoading(true);
-    resetQuizState();
-    setError(null);
-    try {
-      const result = await generateQuiz(values);
-      setQuiz(result);
-    } catch (e: any) {
-      console.error(e);
-      if (e.message?.includes('SERVICE_DISABLED')) {
-        setError('The Generative Language API is disabled. Please enable it in your Google Cloud project console and try again in a few minutes.');
-      } else if (e.message?.includes('API_KEY_SERVICE_BLOCKED')) {
-        setError('The request is blocked. Please check your API key restrictions in the Google Cloud Console and ensure the "Generative Language API" is allowed.');
-      } else {
-        setError('The AI failed to generate a quiz for this topic. Please try a different topic.');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  useEffect(() => {
+    setQuiz(hardcodedQuiz);
+  }, []);
 
   const handleAnswerSelect = (questionIndex: number, option: string) => {
     setSelectedAnswers(prev => ({ ...prev, [questionIndex]: option }));
   };
+  
+  const resetQuiz = () => {
+    setSelectedAnswers({});
+    setAnswerStates({});
+    setShowResults(false);
+  }
 
   const handleSubmitQuiz = () => {
     if (!quiz) return;
@@ -87,143 +99,86 @@ export default function QuizClient() {
     setShowResults(true);
   };
 
+  if (!quiz) {
+    return null; 
+  }
+
   return (
     <div className="max-w-3xl mx-auto">
-      <Card>
+      <Card className="animate-in fade-in">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-primary">
             <HelpCircle className="h-6 w-6" />
-            Generate a Quiz
+            {quiz.quizTitle}
           </CardTitle>
           <CardDescription>
-            Enter a financial topic to generate a quiz and test your knowledge.
+            Test your knowledge about the fundamentals of the stock market.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="topic"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Quiz Topic</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., 'Stock Market Basics' or 'Retirement Accounts'" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+          <div className="space-y-6">
+            {quiz.questions.map((q, i) => (
+              <div key={i} className="space-y-4">
+                <p className="font-semibold">{i + 1}. {q.questionText}</p>
+                <div className="space-y-2">
+                  {q.options.map((option) => {
+                    const isSelected = selectedAnswers[i] === option;
+                    const state = answerStates[i];
+                    const isCorrectAnswer = q.correctAnswer === option;
+
+                    return (
+                      <Button
+                        key={option}
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left h-auto py-2 whitespace-normal",
+                          showResults && isCorrectAnswer && 'border-green-500 bg-green-500/10',
+                          showResults && isSelected && state === 'incorrect' && 'border-red-500 bg-red-500/10',
+                          !showResults && isSelected && 'bg-accent',
+                        )}
+                        onClick={() => !showResults && handleAnswerSelect(i, option)}
+                        disabled={showResults}
+                      >
+                        {option}
+                        {showResults && isCorrectAnswer && <CheckCircle className="ml-auto h-5 w-5 text-green-600" />}
+                        {showResults && isSelected && state === 'incorrect' && <XCircle className="ml-auto h-5 w-5 text-red-600" />}
+                      </Button>
+                    );
+                  })}
+                </div>
+
+                {showResults && (
+                   <Collapsible>
+                      <CollapsibleTrigger asChild>
+                         <Button variant="link" className="p-0 text-sm">
+                            Show Explanation
+                         </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                         <Alert className="mt-2">
+                            <AlertDescription>{q.explanation}</AlertDescription>
+                         </Alert>
+                      </CollapsibleContent>
+                   </Collapsible>
                 )}
-              />
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? 'Generating...' : 'Generate Quiz'}
-                <Sparkles className="ml-2 h-4 w-4" />
+                {i < quiz.questions.length - 1 && <Separator />}
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 flex justify-end">
+            {!showResults ? (
+              <Button onClick={handleSubmitQuiz} disabled={Object.keys(selectedAnswers).length !== quiz.questions.length}>
+                Submit Quiz
               </Button>
-            </form>
-          </Form>
+            ) : (
+               <Button onClick={resetQuiz}>
+                  Try Again
+               </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
-
-      {isLoading && (
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-primary">
-              <Bot className="h-6 w-6 animate-pulse" />
-              Generating your quiz...
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Skeleton className="h-8 w-3/4" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-1/2" />
-          </CardContent>
-        </Card>
-      )}
-      
-      {error && (
-         <Alert variant="destructive" className="mt-6">
-            <Bot className="h-4 w-4" />
-            <AlertTitle>Action Required</AlertTitle>
-            <AlertDescription>
-              {error}
-            </AlertDescription>
-          </Alert>
-      )}
-
-      {quiz && !isLoading && !error && (
-        <Card className="mt-6 animate-in fade-in">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-primary">
-              <Bot className="h-6 w-6" />
-              {quiz.quizTitle}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              {quiz.questions.map((q, i) => (
-                <div key={i} className="space-y-4">
-                  <p className="font-semibold">{i + 1}. {q.questionText}</p>
-                  <div className="space-y-2">
-                    {q.options.map((option) => {
-                      const isSelected = selectedAnswers[i] === option;
-                      const state = answerStates[i];
-                      const isCorrectAnswer = q.correctAnswer === option;
-
-                      return (
-                        <Button
-                          key={option}
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left h-auto py-2 whitespace-normal",
-                            showResults && isCorrectAnswer && 'border-green-500 bg-green-500/10',
-                            showResults && isSelected && state === 'incorrect' && 'border-red-500 bg-red-500/10',
-                            !showResults && isSelected && 'bg-accent',
-                          )}
-                          onClick={() => !showResults && handleAnswerSelect(i, option)}
-                          disabled={showResults}
-                        >
-                          {option}
-                          {showResults && isCorrectAnswer && <CheckCircle className="ml-auto h-5 w-5 text-green-600" />}
-                          {showResults && isSelected && state === 'incorrect' && <XCircle className="ml-auto h-5 w-5 text-red-600" />}
-                        </Button>
-                      );
-                    })}
-                  </div>
-
-                  {showResults && (
-                     <Collapsible>
-                        <CollapsibleTrigger asChild>
-                           <Button variant="link" className="p-0 text-sm">
-                              Show Explanation
-                           </Button>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent>
-                           <Alert className="mt-2">
-                              <AlertDescription>{q.explanation}</AlertDescription>
-                           </Alert>
-                        </CollapsibleContent>
-                     </Collapsible>
-                  )}
-                  {i < quiz.questions.length - 1 && <Separator />}
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 flex justify-end">
-              {!showResults ? (
-                <Button onClick={handleSubmitQuiz} disabled={Object.keys(selectedAnswers).length !== quiz.questions.length}>
-                  Submit Quiz
-                </Button>
-              ) : (
-                 <Button onClick={() => form.handleSubmit(onSubmit)()}>
-                    Try a New Quiz
-                 </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 }
