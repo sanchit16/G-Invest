@@ -5,6 +5,7 @@ export const ai = genkit({
   plugins: [
     googleAI({
       apiVersion: 'v1beta',
+      googleSearch: true,
     }),
   ],
   model: 'googleai/gemini-2.0-flash',

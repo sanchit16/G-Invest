@@ -9,6 +9,7 @@
  */
 
 import {ai} from '@/ai/genkit';
+import {googleSearch} from '@genkit-ai/googleai';
 import {z} from 'genkit';
 
 const AiQuizGeneratorInputSchema = z.object({
@@ -37,7 +38,12 @@ const quizPrompt = ai.definePrompt({
   name: 'quizPrompt',
   input: {schema: AiQuizGeneratorInputSchema},
   output: {schema: AiQuizGeneratorOutputSchema},
-  prompt: `You are a financial education expert. Generate a short, engaging quiz with 3-5 multiple choice questions on the following topic: {{{topic}}}. For each question, provide four options, one correct answer, and a brief explanation for the correct answer.`,
+  tools: [googleSearch],
+  prompt: `You are a financial education expert. Your task is to generate a short, engaging quiz.
+  
+  First, use the provided search tool to find information on the following topic: {{{topic}}}.
+  
+  Based on your search results, generate a quiz with 3-5 multiple choice questions. For each question, provide four options, one correct answer, and a brief explanation for the correct answer.`,
 });
 
 const generateQuizFlow = ai.defineFlow(
