@@ -116,7 +116,7 @@ export default function SearchClient() {
           </Alert>
       )}
 
-      {result && !error && (
+      {result && !isLoading && !error && (
         <Card className="mt-6 animate-in fade-in">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-primary">

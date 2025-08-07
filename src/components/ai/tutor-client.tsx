@@ -126,7 +126,7 @@ export default function AITutorClient() {
             </Alert>
         )}
 
-        {curriculum && !error && (
+        {curriculum && !isLoading && !error && (
           <Card className="animate-in fade-in">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-primary">
