@@ -36,7 +36,7 @@ export async function generateQuiz(input: AiQuizGeneratorInput): Promise<AiQuizG
 const quizPrompt = ai.definePrompt({
   name: 'quizPrompt',
   input: {schema: AiQuizGeneratorInputSchema},
-  output: {schema: AiQuizGeneratorOutputSchema}, // This line was missing and is the critical fix.
+  output: {schema: AiQuizGeneratorOutputSchema},
   prompt: `You are a financial education expert. Your task is to generate a short, engaging quiz on {{{topic}}}.
   
   Generate a quiz with 3-5 multiple choice questions. For each question, provide four options, one correct answer, and a brief explanation for the correct answer. Use your internal knowledge to create the questions.`,
