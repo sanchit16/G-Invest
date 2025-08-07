@@ -9,7 +9,9 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const AiFinancialTutorInputSchema = z.object({});
+const AiFinancialTutorInputSchema = z.object({
+  topic: z.string().describe('The topic or book to base the financial lessons on.'),
+});
 export type AiFinancialTutorInput = z.infer<typeof AiFinancialTutorInputSchema>;
 
 const LessonSchema = z.object({
@@ -34,9 +36,15 @@ const prompt = ai.definePrompt({
   name: 'aiFinancialTutorPrompt',
   input: {schema: AiFinancialTutorInputSchema},
   output: {schema: AiFinancialTutorOutputSchema},
-  prompt: `You are an AI financial tutor. Your task is to generate a curriculum of bite-sized financial lessons based on the core principles of the book "The Intelligent Investor" by Benjamin Graham.
+  prompt: `You are an AI financial tutor. Your task is to generate a curriculum of bite-sized financial lessons.
+    
+    {{#if topic}}
+    Base the lessons on the core principles of: {{{topic}}}.
+    {{else}}
+    Base the lessons on general, fundamental principles of investing for beginners.
+    {{/if}}
 
-    Create a list of 5-7 lessons that cover key concepts from the book relevant to understanding the market. Each lesson should have a clear title and a detailed content body. The content should be presented in a way that is easy for a beginner to understand.
+    Create a list of 5-7 lessons. Each lesson should have a clear title and a detailed content body. The content should be presented in a way that is easy for a beginner to understand.
     `,
 });
 

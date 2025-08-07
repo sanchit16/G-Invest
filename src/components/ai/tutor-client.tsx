@@ -1,39 +1,66 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { BookOpen, Bot, Sparkles } from 'lucide-react';
 
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { aiFinancialTutor, type AiFinancialTutorOutput } from '@/ai/flows/ai-financial-tutor';
 import { Skeleton } from '../ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
+const formSchema = z.object({
+  topic: z.string(),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
 export default function AITutorClient() {
   const [curriculum, setCurriculum] = useState<AiFinancialTutorOutput | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentTopic, setCurrentTopic] = useState<string>('beginner investing principles');
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      topic: '',
+    },
+  });
+
+  async function generateCurriculum(topic: string) {
+    setIsLoading(true);
+    setError(null);
+    setCurriculum(null);
+    setCurrentTopic(topic || 'beginner investing principles');
+    try {
+      const result = await aiFinancialTutor({ topic });
+      setCurriculum(result);
+    } catch (e: any) {
+      console.error(e);
+      if (e.message?.includes('SERVICE_DISABLED')) {
+        setError('The AI Tutor is being set up. This can take a few minutes. Please try again shortly.');
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   useEffect(() => {
-    async function generateCurriculum() {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const result = await aiFinancialTutor({});
-        setCurriculum(result);
-      } catch (e: any) {
-        console.error(e);
-        if (e.message?.includes('SERVICE_DISABLED')) {
-          setError('The AI Tutor is being set up. This can take a few minutes. Please try again shortly.');
-        } else {
-          setError('An unexpected error occurred. Please try again.');
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    generateCurriculum();
+    generateCurriculum('');
   }, []);
+
+  function onSubmit(values: FormValues) {
+    generateCurriculum(values.topic);
+  }
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -44,9 +71,32 @@ export default function AITutorClient() {
             AI-Generated Curriculum
           </CardTitle>
           <CardDescription>
-            A personalized set of lessons on investing principles, inspired by "The Intelligent Investor."
+            Enter a topic or book name below to generate a custom curriculum, or leave it blank for general investing lessons.
           </CardDescription>
         </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start gap-4">
+              <FormField
+                control={form.control}
+                name="topic"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel className="sr-only">Topic</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., 'The Intelligent Investor', 'value investing', 'crypto basics'" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? 'Generating...' : 'Generate'}
+                <Sparkles className="ml-2 h-4 w-4" />
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
       </Card>
 
       {isLoading && (
@@ -82,7 +132,7 @@ export default function AITutorClient() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-primary">
               <Bot className="h-6 w-6" />
-              Your Investing Curriculum
+              <span className="capitalize">Your Curriculum on "{currentTopic}"</span>
             </CardTitle>
              <CardDescription>
               Expand each section below to view your lesson.
