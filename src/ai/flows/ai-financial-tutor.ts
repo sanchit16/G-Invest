@@ -9,20 +9,20 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const AiFinancialTutorInputSchema = z.object({
-  skillLevel: z
-    .string()
-    .describe("The user's current skill level in financial literacy."),
-  learningGoal: z
-    .string()
-    .describe('The specific financial concept the user wants to learn about.'),
-});
+const AiFinancialTutorInputSchema = z.object({});
 export type AiFinancialTutorInput = z.infer<typeof AiFinancialTutorInputSchema>;
 
+const LessonSchema = z.object({
+  title: z.string().describe('The title of the lesson.'),
+  content: z.string().describe('The detailed content of the lesson.'),
+});
+
 const AiFinancialTutorOutputSchema = z.object({
-  lesson: z
-    .string()
-    .describe('A personalized financial lesson based on the user input.'),
+  lessons: z
+    .array(LessonSchema)
+    .describe(
+      'A list of financial lessons to form a curriculum.'
+    ),
 });
 export type AiFinancialTutorOutput = z.infer<typeof AiFinancialTutorOutputSchema>;
 
@@ -34,14 +34,10 @@ const prompt = ai.definePrompt({
   name: 'aiFinancialTutorPrompt',
   input: {schema: AiFinancialTutorInputSchema},
   output: {schema: AiFinancialTutorOutputSchema},
-  prompt: `You are an AI financial tutor that provides personalized,
-    bite-sized financial lessons based on the user's current progress and skill level.
+  prompt: `You are an AI financial tutor. Your task is to generate a curriculum of bite-sized financial lessons based on the core principles of the book "The Intelligent Investor" by Benjamin Graham.
 
-    Skill Level: {{{skillLevel}}}
-    Learning Goal: {{{learningGoal}}}
-
-    Provide a lesson that is tailored to the user's needs, and present the information in a way that is easy to understand.
-    `, // Removed unnecessary line break here
+    Create a list of 5-7 lessons that cover key concepts from the book relevant to understanding the market. Each lesson should have a clear title and a detailed content body. The content should be presented in a way that is easy for a beginner to understand.
+    `,
 });
 
 const aiFinancialTutorFlow = ai.defineFlow(
