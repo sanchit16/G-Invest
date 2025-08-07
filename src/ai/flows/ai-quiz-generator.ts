@@ -16,8 +16,16 @@ const AiQuizGeneratorInputSchema = z.object({
 });
 export type AiQuizGeneratorInput = z.infer<typeof AiQuizGeneratorInputSchema>;
 
+const QuestionSchema = z.object({
+  questionText: z.string().describe('The text of the quiz question.'),
+  options: z.array(z.string()).describe('A list of multiple-choice options.'),
+  correctAnswer: z.string().describe('The correct answer from the list of options.'),
+  explanation: z.string().describe('A brief explanation of why the answer is correct.'),
+});
+
 const AiQuizGeneratorOutputSchema = z.object({
-  quiz: z.string().describe('The generated quiz questions and answers.'),
+  quizTitle: z.string().describe('A creative and relevant title for the quiz.'),
+  questions: z.array(QuestionSchema).describe('A list of 3-5 quiz questions.'),
 });
 export type AiQuizGeneratorOutput = z.infer<typeof AiQuizGeneratorOutputSchema>;
 
@@ -29,7 +37,7 @@ const quizPrompt = ai.definePrompt({
   name: 'quizPrompt',
   input: {schema: AiQuizGeneratorInputSchema},
   output: {schema: AiQuizGeneratorOutputSchema},
-  prompt: `You are a financial education expert. Generate a quiz on the following topic: {{{topic}}}. The quiz should include multiple choice questions and their corresponding answers. Format the quiz in plain text.`, 
+  prompt: `You are a financial education expert. Generate a short, engaging quiz with 3-5 multiple choice questions on the following topic: {{{topic}}}. For each question, provide four options, one correct answer, and a brief explanation for the correct answer.`,
 });
 
 const generateQuizFlow = ai.defineFlow(
