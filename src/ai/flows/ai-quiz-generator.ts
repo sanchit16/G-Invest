@@ -39,6 +39,7 @@ const quizPrompt = ai.definePrompt({
   input: {schema: AiQuizGeneratorInputSchema},
   output: {schema: AiQuizGeneratorOutputSchema},
   tools: [googleAI.googleSearch],
+  model: 'googleai/gemini-1.5-flash',
   prompt: `You are a financial education expert. Your task is to generate a short, engaging quiz.
   
   First, use the provided search tool to find information on the following topic: {{{topic}}}.
