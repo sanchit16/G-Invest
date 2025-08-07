@@ -4,7 +4,6 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ChartContainer } from '@/components/ui/chart';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
 import { RadialBar, RadialBarChart } from 'recharts';
 
 const chartData = [{ name: 'Readiness', value: 75 }];
