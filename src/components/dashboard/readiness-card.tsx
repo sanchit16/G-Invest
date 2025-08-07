@@ -12,6 +12,17 @@ import { RadialBar, RadialBarChart } from 'recharts';
 const chartData = [{ name: 'Readiness', value: 75, fill: 'var(--color-primary)' }];
 
 export default function ReadinessCard() {
+  const score = chartData[0].value;
+  let readinessText = '';
+  if (score >= 75) {
+    readinessText = 'Ready to invest!';
+  } else if (score >= 50) {
+    readinessText = 'Almost there';
+  } else {
+    readinessText = 'Needs more practice';
+  }
+
+
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -38,8 +49,8 @@ export default function ReadinessCard() {
             />
           </RadialBarChart>
         </ChartContainer>
-         <div className="text-3xl font-bold -mt-20">75/100</div>
-         <p className="text-xs text-muted-foreground mt-16">Ready to invest!</p>
+         <div className="text-3xl font-bold -mt-20">{score}/100</div>
+         <p className="text-xs text-muted-foreground mt-16">{readinessText}</p>
       </CardContent>
     </Card>
   );
