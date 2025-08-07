@@ -19,7 +19,7 @@ export type AiQuizGeneratorInput = z.infer<typeof AiQuizGeneratorInputSchema>;
 
 const QuestionSchema = z.object({
   questionText: z.string().describe('The text of the quiz question.'),
-  options: z.array(z.string()).describe('A list of multiple-choice options.'),
+  options: z.array(z.string()).describe('A list of four multiple-choice options.'),
   correctAnswer: z.string().describe('The correct answer from the list of options.'),
   explanation: z.string().describe('A brief explanation of why the answer is correct.'),
 });
