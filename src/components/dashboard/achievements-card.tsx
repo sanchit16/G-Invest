@@ -37,14 +37,14 @@ export default function AchievementsCard() {
           <Medal className="h-5 w-5 text-muted-foreground" />
           Achievements
         </CardTitle>
-        <CardDescription>Badges you've earned.</CardDescription>
+        <CardDescription>Badges you've earned. Hover to see details.</CardDescription>
       </CardHeader>
       <CardContent>
         <TooltipProvider>
           <div className="flex flex-wrap gap-4">
             {achievements.map((badge) => (
               <Tooltip key={badge.title}>
-                <TooltipTrigger>
+                <TooltipTrigger asChild>
                   <div
                     className={`flex h-12 w-12 items-center justify-center rounded-full border-2 ${
                       badge.earned ? 'border-primary bg-primary/10' : 'border-dashed border-muted-foreground bg-muted'
