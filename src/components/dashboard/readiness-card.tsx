@@ -4,6 +4,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ChartContainer } from '@/components/ui/chart';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Target } from 'lucide-react';
 import { RadialBar, RadialBarChart } from 'recharts';
 
 const chartData = [{ name: 'Readiness', value: 75 }];
@@ -30,32 +31,34 @@ export default function ReadinessCard() {
         <TooltipTrigger asChild>
           <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
             <CardHeader className="items-center pb-2">
-                <CardTitle className="text-sm font-medium">Market Readiness</CardTitle>
+                <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                  <Target className="h-5 w-5 text-muted-foreground" />
+                  Market Readiness
+                </CardTitle>
               <CardDescription className="text-xs">Your investment knowledge score.</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col items-center justify-center pt-2">
-              <div className="relative">
-                <ChartContainer
-                  config={{}}
-                  className="mx-auto aspect-square h-full max-h-[140px]"
+              <ChartContainer
+                config={{}}
+                className="mx-auto aspect-square h-full max-h-[140px]"
+              >
+                <RadialBarChart
+                  data={coloredChartData}
+                  startAngle={-270}
+                  endAngle={90}
+                  innerRadius={60}
+                  outerRadius={70}
+                  barSize={10}
                 >
-                  <RadialBarChart
-                    data={coloredChartData}
-                    startAngle={-270}
-                    endAngle={90}
-                    innerRadius={60}
-                    outerRadius={70}
-                    barSize={10}
-                  >
-                    <RadialBar dataKey="value" background={{ fill: 'hsla(var(--muted))' }} cornerRadius={10} />
-                  </RadialBarChart>
-                </ChartContainer>
-                <div
-                  className="absolute inset-0 flex items-center justify-center"
-                >
-                  <span className="text-4xl font-bold">{score}</span>
-                  <span className="text-xl font-bold text-muted-foreground mt-2">/100</span>
-                </div>
+                  <RadialBar dataKey="value" background={{ fill: 'hsla(var(--muted))' }} cornerRadius={10} />
+                </RadialBarChart>
+              </ChartContainer>
+              <div
+                className="absolute"
+                style={{top: '55%', left: '50%', transform: 'translate(-50%, -50%)'}}
+              >
+                <span className="text-4xl font-bold">{score}</span>
+                <span className="text-xl font-bold text-muted-foreground mt-2">/100</span>
               </div>
             </CardContent>
           </Card>
