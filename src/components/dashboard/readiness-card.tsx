@@ -55,9 +55,9 @@ export default function ReadinessCard() {
                   <RadialBar dataKey="value" background={{ fill: 'hsla(var(--muted))' }} cornerRadius={10} />
                 </RadialBarChart>
               </ChartContainer>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-row items-baseline justify-center gap-1">
                 <span className="text-4xl font-bold">{score}</span>
-                <span className="text-xl font-bold text-muted-foreground -mt-1">/100</span>
+                <span className="text-xl font-bold text-muted-foreground">/100</span>
               </div>
             </CardContent>
           </Card>
