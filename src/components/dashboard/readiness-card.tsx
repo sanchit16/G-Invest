@@ -37,7 +37,7 @@ export default function ReadinessCard() {
                 </CardTitle>
               <CardDescription className="text-xs">Your investment knowledge score.</CardDescription>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col items-center justify-center pt-2">
+            <CardContent className="flex-1 flex flex-col items-center justify-center pt-2 relative">
               <ChartContainer
                 config={{}}
                 className="mx-auto aspect-square h-full max-h-[140px]"
@@ -49,16 +49,15 @@ export default function ReadinessCard() {
                   innerRadius={60}
                   outerRadius={70}
                   barSize={10}
+                  cx="50%"
+                  cy="50%"
                 >
                   <RadialBar dataKey="value" background={{ fill: 'hsla(var(--muted))' }} cornerRadius={10} />
                 </RadialBarChart>
               </ChartContainer>
-              <div
-                className="absolute"
-                style={{top: '55%', left: '50%', transform: 'translate(-50%, -50%)'}}
-              >
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center">
                 <span className="text-4xl font-bold">{score}</span>
-                <span className="text-xl font-bold text-muted-foreground mt-2">/100</span>
+                <span className="text-xl font-bold text-muted-foreground -mt-1">/100</span>
               </div>
             </CardContent>
           </Card>
