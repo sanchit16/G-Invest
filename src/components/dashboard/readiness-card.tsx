@@ -14,29 +14,27 @@ const chartData = [{ name: 'Readiness', value: 75, fill: 'var(--color-primary)' 
 
 export default function ReadinessCard() {
   const score = chartData[0].value;
-  let readinessLevel = '';
   let readinessDescription = '';
 
   if (score >= 80) {
-    readinessLevel = 'Post-Graduate';
-    readinessDescription = 'Ready for advanced strategies.';
-  } else if (score >= 50) {
-    readinessLevel = 'Graduate';
-    readinessDescription = 'Ready for basic investing.';
+    readinessDescription = 'Excellent! You have an expert understanding of the market.';
+  } else if (score >= 60) {
+    readinessDescription = 'Great! You have a strong understanding of core concepts.';
+  } else if (score >= 40) {
+    readinessDescription = 'Good! You are building a solid foundation of knowledge.';
   } else {
-    readinessLevel = 'Undergraduate';
-    readinessDescription = 'Keep learning the basics.';
+    readinessDescription = 'You are just getting started. Keep learning!';
   }
 
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
-      <CardHeader className="space-y-0 pb-2">
-        <div className="flex items-center justify-between">
+      <CardHeader className="items-center pb-2">
+        <div className="flex items-center justify-between w-full">
             <CardTitle className="text-sm font-medium">Market Readiness</CardTitle>
             <Target className="h-5 w-5 text-muted-foreground" />
         </div>
-        <CardDescription>Your investment knowledge level.</CardDescription>
+        <CardDescription className="text-xs">Your investment knowledge score.</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col items-center justify-center pt-2">
         <ChartContainer
@@ -58,8 +56,8 @@ export default function ReadinessCard() {
             />
           </RadialBarChart>
         </ChartContainer>
-         <div className="text-3xl font-bold -mt-[7.5rem]">{readinessLevel}</div>
-         <p className="text-xs text-muted-foreground mt-[6.5rem]">{readinessDescription}</p>
+         <div className="text-4xl font-bold -mt-[8.5rem]">{score}%</div>
+         <p className="text-xs text-muted-foreground mt-[7rem] px-4 text-center">{readinessDescription}</p>
       </CardContent>
     </Card>
   );
