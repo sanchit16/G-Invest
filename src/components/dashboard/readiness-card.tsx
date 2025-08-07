@@ -38,7 +38,7 @@ export default function ReadinessCard() {
             <CardHeader className="items-center pb-2">
               <div className="flex items-center justify-between w-full">
                 <CardTitle className="text-sm font-medium">Market Readiness</CardTitle>
-                <div className={cn("h-4 w-4 rounded-full", scoreColorClass)} />
+                <div className={cn("h-5 w-5 rounded-full", scoreColorClass)} />
               </div>
               <CardDescription className="text-xs">Your investment knowledge score.</CardDescription>
             </CardHeader>
