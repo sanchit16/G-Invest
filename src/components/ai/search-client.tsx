@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -44,6 +45,8 @@ export default function SearchClient() {
       console.error(e);
       if (e.message?.includes('SERVICE_DISABLED')) {
         setError('The Concept Search is being set up. This can take a few minutes. Please try again shortly.');
+      } else if (e.message?.includes('API_KEY_SERVICE_BLOCKED')) {
+        setError('The request is blocked. Please check your API key restrictions in the Google Cloud Console and ensure the "Generative Language API" is allowed.');
       } else {
         setError('An unexpected error occurred. Please try again.');
       }
@@ -109,7 +112,7 @@ export default function SearchClient() {
       {error && (
          <Alert variant="destructive" className="mt-6">
             <Bot className="h-4 w-4" />
-            <AlertTitle>Setup in Progress</AlertTitle>
+            <AlertTitle>Action Required</AlertTitle>
             <AlertDescription>
               {error}
             </AlertDescription>

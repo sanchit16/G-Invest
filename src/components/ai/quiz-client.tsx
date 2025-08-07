@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -58,6 +59,8 @@ export default function QuizClient() {
       console.error(e);
       if (e.message?.includes('SERVICE_DISABLED')) {
         setError('The Generative Language API is disabled. Please enable it in your Google Cloud project console and try again in a few minutes.');
+      } else if (e.message?.includes('API_KEY_SERVICE_BLOCKED')) {
+        setError('The request is blocked. Please check your API key restrictions in the Google Cloud Console and ensure the "Generative Language API" is allowed.');
       } else {
         setError('The AI failed to generate a quiz for this topic. Please try a different topic.');
       }
