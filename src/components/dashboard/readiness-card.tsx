@@ -11,24 +11,19 @@ const chartData = [{ name: 'Readiness', value: 75 }];
 
 export default function ReadinessCard() {
   const score = chartData[0].value;
-  let readinessDescription = '';
   let scoreColor = '';
   let scoreColorClass = '';
 
   if (score >= 80) {
-    readinessDescription = 'Expert understanding of the market.';
     scoreColor = 'hsl(var(--secondary))';
     scoreColorClass = 'bg-secondary';
   } else if (score >= 60) {
-    readinessDescription = 'Strong understanding of core concepts.';
     scoreColor = 'hsl(var(--chart-3))';
     scoreColorClass = 'bg-chart-3';
   } else if (score >= 40) {
-    readinessDescription = 'Building a solid foundation.';
     scoreColor = 'hsl(var(--chart-5))';
     scoreColorClass = 'bg-chart-5';
   } else {
-    readinessDescription = 'Just getting started. Keep learning!';
     scoreColor = 'hsl(var(--destructive))';
     scoreColorClass = 'bg-destructive';
   }
@@ -65,13 +60,13 @@ export default function ReadinessCard() {
                   </RadialBarChart>
                 </ChartContainer>
                 <div
-                  className="absolute inset-0 flex items-center justify-center text-4xl font-bold"
+                  className="absolute inset-0 flex items-center justify-center"
                 >
-                  {score}
-                  <span className="text-2xl font-bold ml-1">%</span>
+                  <span className="text-4xl font-bold">{score}</span>
+                  <span className="text-xl font-bold text-muted-foreground mt-2">/100</span>
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground mt-2 px-4 text-center">{readinessDescription}</p>
+              <p className="text-xs text-muted-foreground mt-2 px-4 text-center"></p>
             </CardContent>
           </Card>
         </TooltipTrigger>
@@ -79,10 +74,10 @@ export default function ReadinessCard() {
           <div className="p-2">
             <p className="font-bold mb-2">Readiness Guide</p>
             <ul className="list-disc list-inside space-y-1 text-sm">
-               <li><span className="font-semibold" style={{color: 'hsl(var(--secondary))'}}>80-100%:</span> Expert</li>
-              <li><span className="font-semibold" style={{color: 'hsl(var(--chart-3))'}}>60-79%:</span> Strong</li>
-              <li><span className="font-semibold" style={{color: 'hsl(var(--chart-5))'}}>40-59%:</span> Building</li>
-              <li><span className="font-semibold" style={{color: 'hsl(var(--destructive))'}}>0-39%:</span> Getting Started</li>
+               <li><span className="font-semibold" style={{color: 'hsl(var(--secondary))'}}>80-100:</span> Expert</li>
+              <li><span className="font-semibold" style={{color: 'hsl(var(--chart-3))'}}>60-79:</span> Strong</li>
+              <li><span className="font-semibold" style={{color: 'hsl(var(--chart-5))'}}>40-59:</span> Building</li>
+              <li><span className="font-semibold" style={{color: 'hsl(var(--destructive))'}}>0-39:</span> Getting Started</li>
             </ul>
           </div>
         </TooltipContent>
