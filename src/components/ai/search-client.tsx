@@ -39,7 +39,8 @@ export default function SearchClient() {
     try {
       const searchResult = await financialConceptSearch(values);
       setResult(searchResult);
-    } catch (e: any) {
+    } catch (e: any)
+      {
       console.error(e);
       if (e.message?.includes('SERVICE_DISABLED')) {
         setError('The Concept Search is being set up. This can take a few minutes. Please try again shortly.');

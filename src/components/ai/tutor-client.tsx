@@ -117,7 +117,7 @@ export default function AITutorClient() {
         )}
 
         {error && (
-           <Alert variant="destructive">
+           <Alert variant="destructive" className="mt-6">
               <Bot className="h-4 w-4" />
               <AlertTitle>Setup in Progress</AlertTitle>
               <AlertDescription>
