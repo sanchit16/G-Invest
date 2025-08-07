@@ -46,11 +46,7 @@ export default function SearchClient() {
       if (e.message?.includes('SERVICE_DISABLED')) {
         setError('The Concept Search is being set up. This can take a few minutes. Please try again shortly.');
       } else {
-        toast({
-          title: 'Error searching concept',
-          description: 'An unexpected error occurred. Please try again.',
-          variant: 'destructive',
-        });
+        setError('An unexpected error occurred. Please try again.');
       }
     } finally {
       setIsLoading(false);

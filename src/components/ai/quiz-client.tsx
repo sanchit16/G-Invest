@@ -46,11 +46,7 @@ export default function QuizClient() {
       if (e.message?.includes('SERVICE_DISABLED')) {
         setError('The Quiz Generator is being set up. This can take a few minutes. Please try again shortly.');
       } else {
-        toast({
-          title: 'Error generating quiz',
-          description: 'An unexpected error occurred. Please try again.',
-          variant: 'destructive',
-        });
+        setError('An unexpected error occurred. Please try again.');
       }
     } finally {
       setIsLoading(false);

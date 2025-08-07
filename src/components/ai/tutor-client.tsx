@@ -28,11 +28,7 @@ export default function AITutorClient() {
         if (e.message?.includes('SERVICE_DISABLED')) {
           setError('The AI Tutor is being set up. This can take a few minutes. Please try again shortly.');
         } else {
-          toast({
-            title: 'Error generating curriculum',
-            description: 'An unexpected error occurred. Please try again.',
-            variant: 'destructive',
-          });
+          setError('An unexpected error occurred. Please try again.');
         }
       } finally {
         setIsLoading(false);
