@@ -9,7 +9,7 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {googleSearch} from '@genkit-ai/googleai/tools';
+import {googleAI} from '@genkit-ai/googleai';
 import {z} from 'genkit';
 
 const AiQuizGeneratorInputSchema = z.object({
@@ -38,7 +38,7 @@ const quizPrompt = ai.definePrompt({
   name: 'quizPrompt',
   input: {schema: AiQuizGeneratorInputSchema},
   output: {schema: AiQuizGeneratorOutputSchema},
-  tools: [googleSearch],
+  tools: [googleAI.googleSearch],
   prompt: `You are a financial education expert. Your task is to generate a short, engaging quiz.
   
   First, use the provided search tool to find information on the following topic: {{{topic}}}.
