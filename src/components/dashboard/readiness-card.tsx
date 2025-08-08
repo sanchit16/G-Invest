@@ -2,29 +2,12 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ChartContainer } from '@/components/ui/chart';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Target } from 'lucide-react';
-import { RadialBar, RadialBarChart } from 'recharts';
 
-const chartData = [{ name: 'Readiness', value: 75 }];
+const score = 75;
 
 export default function ReadinessCard() {
-  const score = chartData[0].value;
-  let scoreColor = '';
-  
-  if (score >= 80) {
-    scoreColor = 'hsl(var(--secondary))';
-  } else if (score >= 60) {
-    scoreColor = 'hsl(var(--chart-3))';
-  } else if (score >= 40) {
-    scoreColor = 'hsl(var(--chart-5))';
-  } else {
-    scoreColor = 'hsl(var(--destructive))';
-  }
-
-  const coloredChartData = [{ ...chartData[0], fill: scoreColor }];
-
   return (
     <TooltipProvider>
       <Tooltip>
@@ -37,25 +20,8 @@ export default function ReadinessCard() {
                 </CardTitle>
               <CardDescription className="text-xs">Your investment knowledge score.</CardDescription>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col items-center justify-center pt-2 relative">
-              <ChartContainer
-                config={{}}
-                className="mx-auto aspect-square h-full max-h-[140px]"
-              >
-                <RadialBarChart
-                  data={coloredChartData}
-                  startAngle={-270}
-                  endAngle={90}
-                  innerRadius={60}
-                  outerRadius={70}
-                  barSize={10}
-                  cx="50%"
-                  cy="50%"
-                >
-                  <RadialBar dataKey="value" background={{ fill: 'hsla(var(--muted))' }} cornerRadius={10} />
-                </RadialBarChart>
-              </ChartContainer>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-row items-baseline justify-center gap-1">
+            <CardContent className="flex-1 flex flex-col items-center justify-center pt-2">
+              <div className="flex flex-row items-baseline justify-center gap-1">
                 <span className="text-4xl font-bold">{score}</span>
                 <span className="text-xl font-bold text-muted-foreground">/100</span>
               </div>
