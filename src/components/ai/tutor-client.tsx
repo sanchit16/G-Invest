@@ -62,7 +62,7 @@ const hardcodedCurriculum: Curriculum = {
         },
         {
             title: "Market Components: Exchanges and Indexes",
-            content: "Stock **exchanges** (like the NYSE) are the regulated venues where most stock trading happens, providing liquidity and price transparency. **Market indexes**, like the S&P 500 or the Dow Jones Industrial Average (DJIA), are used to gauge the overall health and performance of the market. They are a snapshot of a collection of top-performing stocks and serve as benchmarks for investment performance.",
+            content: "Stock **exchanges** (like the NYSE) are the regulated venues where most stock trading happens, providing liquidity and price transparency. **Market indexes**, like the S&P 500 or the Dow Jones Industrial Average (DJIA), are used to gauge the overall health and performance of the market. They are a snapshot of a collection of top-performing stocks and serve as a benchmark for investment performance.",
             duration: "6min",
             completed: true,
         },
@@ -201,7 +201,7 @@ const ChatTutor = () => {
                      {error && (
                         <Alert variant="destructive">
                             <AlertTriangle className="h-4 w-4" />
-                            <AlertTitle>Error</AlertTitle>
+                            <AlertTitle>Action Required</AlertTitle>
                             <AlertDescription>{error}</AlertDescription>
                         </Alert>
                     )}
@@ -256,5 +256,7 @@ export default function AITutorClient() {
     </div>
   );
 }
+
+    
 
     

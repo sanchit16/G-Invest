@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Search, Bot, Sparkles } from 'lucide-react';
+import { Search, Bot, Sparkles, AlertTriangle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -116,7 +116,7 @@ export default function SearchClient() {
 
       {error && (
          <Alert variant="destructive" className="mt-6">
-            <Bot className="h-4 w-4" />
+            <AlertTriangle className="h-4 w-4" />
             <AlertTitle>Action Required</AlertTitle>
             <AlertDescription>
               {error}
@@ -140,3 +140,5 @@ export default function SearchClient() {
     </div>
   );
 }
+
+    
