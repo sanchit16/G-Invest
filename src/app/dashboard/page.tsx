@@ -17,10 +17,14 @@ export default function DashboardPage() {
           <FinancialGoalCard />
           <ReadinessCard />
           <ProgressCard />
-          <AchievementsCard />
         </div>
-        <div className="mt-6">
-          <StocksCard />
+        <div className="mt-6 grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <StocksCard />
+          </div>
+          <div className="lg:col-span-1">
+            <AchievementsCard />
+          </div>
         </div>
       </main>
     </div>
