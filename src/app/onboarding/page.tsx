@@ -93,7 +93,7 @@ const FinishedStep = ({ onFinish }: { onFinish: () => void }) => (
       </div>
       <h1 className="text-3xl font-bold mb-2">You're all set!</h1>
       <p className="text-muted-foreground max-w-md mx-auto mb-6">
-        We've personalized your G-Invest experience. You're ready to start your journey towards financial confidence.
+        Ready, set, grow! Your personalized G-Invest plan is waiting.
       </p>
       <Button size="lg" onClick={onFinish}>
         Go to Dashboard
