@@ -66,7 +66,7 @@ const QuestionStep = ({
 }: {
   question: string;
   options: { id: string; icon: React.ElementType; text: string }[];
-  onSelect: (value: string) => void;
+  onSelect: (value: {id: string, text: string}) => void;
 }) => (
   <div className="text-center">
     <h2 className="text-2xl font-semibold mb-6">{question}</h2>
@@ -76,7 +76,7 @@ const QuestionStep = ({
           key={option.id}
           variant="outline"
           className="h-20 text-md flex items-center justify-start gap-4 p-4"
-          onClick={() => onSelect(option.id)}
+          onClick={() => onSelect(option)}
         >
           <option.icon className="h-8 w-8 text-primary" />
           <span className="text-wrap text-left">{option.text}</span>
@@ -103,7 +103,7 @@ const FinishedStep = ({ onFinish }: { onFinish: () => void }) => (
 
 export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState({});
+  const [answers, setAnswers] = useState<Record<string, {id: string; text: string}>>({});
   const router = useRouter();
 
   const handleNext = () => {
@@ -112,15 +112,15 @@ export default function OnboardingPage() {
     }
   };
 
-  const handleSelect = (value: string) => {
+  const handleSelect = (value: {id: string; text: string}) => {
     setAnswers({ ...answers, [onboardingSteps[currentStep].component.toLowerCase()]: value });
     handleNext();
   };
 
   const handleFinish = () => {
-    // Here you would typically save the user's answers
+    localStorage.setItem('onboardingAnswers', JSON.stringify(answers));
     console.log("Onboarding complete, answers:", answers);
-    router.push('/dashboard-redirect'); // Use a temp redirect to avoid flash of old dashboard
+    router.push('/dashboard-redirect');
   };
 
   const currentStepData = onboardingSteps[currentStep];

@@ -1,11 +1,11 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { BookOpen, CheckCircle, Bot, Sparkles, AlertTriangle, Info } from 'lucide-react';
+import { BookOpen, CheckCircle, Bot, Sparkles, AlertTriangle, Info, Lock } from 'lucide-react';
 import { financialTutorChat } from '@/ai/flows/financial-tutor-chat';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -78,7 +78,7 @@ const hardcodedCurriculum: Curriculum = {
             title: "Understanding Different Asset Types",
             content: "Beyond common stocks, the market includes a variety of other assets. **American Depositary Receipts (ADRs)** represent shares in foreign companies. **Derivatives** like options and futures derive their value from underlying assets. **Funds** like ETFs and mutual funds hold a basket of securities. **Preferred stocks** offer fixed dividends, and **REITs** focus on real estate. Each has different characteristics and risk profiles.",
             duration: "10min",
-            completed: true,
+            completed: false,
         },
         {
             title: "The Role of Regulators",
@@ -219,44 +219,85 @@ const ChatTutor = () => {
 }
 
 export default function AITutorClient() {
-  const [curriculum] = useState<Curriculum>(hardcodedCurriculum);
-  
-  return (
-    <div className="space-y-6">
-      <Card className="animate-in fade-in">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-primary">
-            <BookOpen className="h-6 w-6" />
-            Stock Market Fundamentals
-          </CardTitle>
-           <CardDescription>
-            Your personalized curriculum based on your progress. Select a level to view your lessons.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-            <Tabs defaultValue="beginner" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="beginner">Beginner</TabsTrigger>
-                    <TabsTrigger value="intermediate">Intermediate</TabsTrigger>
-                    <TabsTrigger value="advanced">Advanced</TabsTrigger>
-                </TabsList>
-                <TabsContent value="beginner" className="mt-4">
-                    <LessonList lessons={curriculum.beginner} />
-                </TabsContent>
-                <TabsContent value="intermediate" className="mt-4">
-                    <LessonList lessons={curriculum.intermediate} />
-                </TabsContent>
-                <TabsContent value="advanced" className="mt-4">
-                    <LessonList lessons={curriculum.advanced} />
-                </TabsContent>
-            </Tabs>
-        </CardContent>
-      </Card>
-      <ChatTutor />
-    </div>
-  );
+    const [knowledgeLevel, setKnowledgeLevel] = useState('beginner');
+    const [curriculum] = useState<Curriculum>(hardcodedCurriculum);
+
+    useEffect(() => {
+        const storedAnswers = localStorage.getItem('onboardingAnswers');
+        if (storedAnswers) {
+            const answers = JSON.parse(storedAnswers);
+            setKnowledgeLevel(answers.knowledge?.id || 'beginner');
+        }
+    }, []);
+
+    const isBeginnerCompleted = curriculum.beginner.every(l => l.completed);
+    const isIntermediateCompleted = curriculum.intermediate.every(l => l.completed);
+
+    const availableLevels = {
+        beginner: ['beginner', 'intermediate', 'advanced'],
+        intermediate: ['intermediate', 'advanced'],
+        advanced: ['advanced'],
+    }[knowledgeLevel] || ['beginner', 'intermediate', 'advanced'];
+
+    const isIntermediateLocked = knowledgeLevel === 'beginner' && !isBeginnerCompleted;
+    const isAdvancedLocked = (knowledgeLevel === 'beginner' && !isIntermediateCompleted) || (knowledgeLevel === 'intermediate' && !isIntermediateCompleted);
+    
+    return (
+        <div className="space-y-6">
+            <Card className="animate-in fade-in">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-primary">
+                        <BookOpen className="h-6 w-6" />
+                        Stock Market Fundamentals
+                    </CardTitle>
+                    <CardDescription>
+                        Your personalized curriculum based on your progress. Select a level to view your lessons.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Tabs defaultValue={knowledgeLevel} className="w-full">
+                        <TabsList className="grid w-full grid-cols-3">
+                            {availableLevels.includes('beginner') && <TabsTrigger value="beginner">Beginner</TabsTrigger>}
+                            {availableLevels.includes('intermediate') && (
+                                <TabsTrigger value="intermediate" disabled={isIntermediateLocked} className="relative">
+                                    {isIntermediateLocked && <Lock className="absolute left-2 h-4 w-4" />}
+                                    Intermediate
+                                </TabsTrigger>
+                            )}
+                            {availableLevels.includes('advanced') && (
+                                <TabsTrigger value="advanced" disabled={isAdvancedLocked} className="relative">
+                                     {isAdvancedLocked && <Lock className="absolute left-2 h-4 w-4" />}
+                                    Advanced
+                                </TabsTrigger>
+                            )}
+                        </TabsList>
+                        {availableLevels.includes('beginner') && (
+                            <TabsContent value="beginner" className="mt-4">
+                                <LessonList lessons={curriculum.beginner} />
+                            </TabsContent>
+                        )}
+                        {availableLevels.includes('intermediate') && (
+                            <TabsContent value="intermediate" className="mt-4">
+                                {isIntermediateLocked ? (
+                                    <div className="text-center p-8 text-muted-foreground">Complete the Beginner section to unlock Intermediate lessons.</div>
+                                ) : (
+                                    <LessonList lessons={curriculum.intermediate} />
+                                )}
+                            </TabsContent>
+                        )}
+                        {availableLevels.includes('advanced') && (
+                             <TabsContent value="advanced" className="mt-4">
+                                {isAdvancedLocked ? (
+                                     <div className="text-center p-8 text-muted-foreground">Complete the Intermediate section to unlock Advanced lessons.</div>
+                                ) : (
+                                     <LessonList lessons={curriculum.advanced} />
+                                )}
+                            </TabsContent>
+                        )}
+                    </Tabs>
+                </CardContent>
+            </Card>
+            <ChatTutor />
+        </div>
+    );
 }
-
-    
-
-    
