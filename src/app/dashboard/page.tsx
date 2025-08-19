@@ -3,7 +3,6 @@ import Header from '@/components/header';
 import PortfolioCard from '@/components/dashboard/portfolio-card';
 import ReadinessCard from '@/components/dashboard/readiness-card';
 import ProgressCard from '@/components/dashboard/progress-card';
-import StocksCard from '@/components/dashboard/stocks-card';
 import AchievementsCard from '@/components/dashboard/achievements-card';
 import FinancialGoalCard from '@/components/dashboard/financial-goal-card';
 
@@ -18,13 +17,8 @@ export default function DashboardPage() {
           <ReadinessCard />
           <ProgressCard />
         </div>
-        <div className="mt-6 grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <StocksCard />
-          </div>
-          <div className="lg:col-span-1">
-            <AchievementsCard />
-          </div>
+        <div className="mt-6 grid gap-6">
+          <AchievementsCard />
         </div>
       </main>
     </div>
