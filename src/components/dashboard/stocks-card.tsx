@@ -202,6 +202,90 @@ const stocksData: StockData[] = [
       ],
     },
   },
+  {
+    ticker: 'ADBE',
+    name: 'Adobe Inc.',
+    price: 527.31,
+    change: -1.45,
+    value: 11234.56,
+    changeType: 'decrease',
+    history: {
+      day: [{ month: '10am', value: 530.00 }, { month: '11am', value: 528.50 }, { month: '12pm', value: 527.80 }, { month: '1pm', value: 527.10 }, { month: '2pm', value: 527.31 }],
+      week: [{ month: 'Mon', value: 535.00 }, { month: 'Tue', value: 532.10 }, { month: 'Wed', value: 530.00 }, { month: 'Thu', value: 528.90 }, { month: 'Fri', value: 527.31 }],
+      month: [{ month: 'W1', value: 540.00 }, { month: 'W2', value: 535.00 }, { month: 'W3', value: 532.00 }, { month: 'W4', value: 527.31 }],
+      year: [{ month: 'Jan', value: 480.00 }, { month: 'Mar', value: 500.00 }, { month: 'Jun', value: 515.00 }, { month: 'Sep', value: 525.00 }, { month: 'Dec', value: 527.31 }],
+    },
+  },
+  {
+    ticker: 'MSFT',
+    name: 'Microsoft',
+    price: 447.67,
+    change: 0.55,
+    value: 32098.78,
+    changeType: 'increase',
+    history: {
+      day: [{ month: '10am', value: 445.00 }, { month: '11am', value: 446.50 }, { month: '12pm', value: 447.00 }, { month: '1pm', value: 447.80 }, { month: '2pm', value: 447.67 }],
+      week: [{ month: 'Mon', value: 440.00 }, { month: 'Tue', value: 442.00 }, { month: 'Wed', value: 445.00 }, { month: 'Thu', value: 446.00 }, { month: 'Fri', value: 447.67 }],
+      month: [{ month: 'W1', value: 430.00 }, { month: 'W2', value: 435.00 }, { month: 'W3', value: 440.00 }, { month: 'W4', value: 447.67 }],
+      year: [{ month: 'Jan', value: 380.00 }, { month: 'Mar', value: 400.00 }, { month: 'Jun', value: 420.00 }, { month: 'Sep', value: 435.00 }, { month: 'Dec', value: 447.67 }],
+    },
+  },
+  {
+    ticker: 'NKE',
+    name: 'Nike',
+    price: 94.75,
+    change: -0.21,
+    value: 8765.43,
+    changeType: 'decrease',
+    history: {
+      day: [{ month: '10am', value: 95.00 }, { month: '11am', value: 94.80 }, { month: '12pm', value: 94.70 }, { month: '1pm', value: 94.60 }, { month: '2pm', value: 94.75 }],
+      week: [{ month: 'Mon', value: 96.00 }, { month: 'Tue', value: 95.50 }, { month: 'Wed', value: 95.00 }, { month: 'Thu', value: 94.80 }, { month: 'Fri', value: 94.75 }],
+      month: [{ month: 'W1', value: 98.00 }, { month: 'W2', value: 96.00 }, { month: 'W3', value: 95.50 }, { month: 'W4', value: 94.75 }],
+      year: [{ month: 'Jan', value: 105.00 }, { month: 'Mar', value: 100.00 }, { month: 'Jun', value: 98.00 }, { month: 'Sep', value: 96.00 }, { month: 'Dec', value: 94.75 }],
+    },
+  },
+  {
+    ticker: 'BA',
+    name: 'Boeing',
+    price: 177.38,
+    change: 1.12,
+    value: 7890.12,
+    changeType: 'increase',
+    history: {
+      day: [{ month: '10am', value: 175.00 }, { month: '11am', value: 176.50 }, { month: '12pm', value: 177.00 }, { month: '1pm', value: 177.50 }, { month: '2pm', value: 177.38 }],
+      week: [{ month: 'Mon', value: 170.00 }, { month: 'Tue', value: 172.00 }, { month: 'Wed', value: 174.00 }, { month: 'Thu', value: 176.00 }, { month: 'Fri', value: 177.38 }],
+      month: [{ month: 'W1', value: 165.00 }, { month: 'W2', value: 170.00 }, { month: 'W3', value: 175.00 }, { month: 'W4', value: 177.38 }],
+      year: [{ month: 'Jan', value: 200.00 }, { month: 'Mar', value: 190.00 }, { month: 'Jun', value: 180.00 }, { month: 'Sep', value: 175.00 }, { month: 'Dec', value: 177.38 }],
+    },
+  },
+  {
+    ticker: 'NOW',
+    name: 'ServiceNow',
+    price: 742.25,
+    change: 2.30,
+    value: 15432.10,
+    changeType: 'increase',
+    history: {
+      day: [{ month: '10am', value: 735.00 }, { month: '11am', value: 738.00 }, { month: '12pm', value: 740.00 }, { month: '1pm', value: 741.50 }, { month: '2pm', value: 742.25 }],
+      week: [{ month: 'Mon', value: 720.00 }, { month: 'Tue', value: 725.00 }, { month: 'Wed', value: 730.00 }, { month: 'Thu', value: 738.00 }, { month: 'Fri', value: 742.25 }],
+      month: [{ month: 'W1', value: 700.00 }, { month: 'W2', value: 715.00 }, { month: 'W3', value: 730.00 }, { month: 'W4', value: 742.25 }],
+      year: [{ month: 'Jan', value: 600.00 }, { month: 'Mar', value: 650.00 }, { month: 'Jun', value: 680.00 }, { month: 'Sep', value: 710.00 }, { month: 'Dec', value: 742.25 }],
+    },
+  },
+  {
+    ticker: 'NVDA',
+    name: 'Nvidia',
+    price: 135.58,
+    change: 3.50,
+    value: 45012.34,
+    changeType: 'increase',
+    history: {
+      day: [{ month: '10am', value: 131.00 }, { month: '11am', value: 132.50 }, { month: '12pm', value: 134.00 }, { month: '1pm', value: 135.00 }, { month: '2pm', value: 135.58 }],
+      week: [{ month: 'Mon', value: 125.00 }, { month: 'Tue', value: 128.00 }, { month: 'Wed', value: 130.00 }, { month: 'Thu', value: 133.00 }, { month: 'Fri', value: 135.58 }],
+      month: [{ month: 'W1', value: 115.00 }, { month: 'W2', value: 120.00 }, { month: 'W3', value: 128.00 }, { month: 'W4', value: 135.58 }],
+      year: [{ month: 'Jan', value: 80.00 }, { month: 'Mar', value: 95.00 }, { month: 'Jun', value: 110.00 }, { month: 'Sep', value: 125.00 }, { month: 'Dec', value: 135.58 }],
+    },
+  },
 ];
 
 const tradeReasons = {
@@ -400,3 +484,4 @@ export default function StocksCard() {
     </Card>
   );
 }
+
