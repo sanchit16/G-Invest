@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import {
   Card,
@@ -37,6 +37,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { Slider } from '../ui/slider';
+import { AlertTriangle } from 'lucide-react';
 
 type StockData = {
   ticker: string;
@@ -306,21 +308,27 @@ const tradeReasons = {
 export default function StocksCard() {
   const [selectedStock, setSelectedStock] = useState<StockData>(stocksData[0]);
   const [timeRange, setTimeRange] = useState<'day' | 'week' | 'month' | 'year'>('day');
+  
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [tradeStep, setTradeStep] = useState<'reason' | 'amount' | 'risk' | null>(null);
   const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
+  const [tradeVolume, setTradeVolume] = useState([50]);
+  const [riskValue, setRiskValue] = useState(0);
+
   const { toast } = useToast();
 
   const handleTradeClick = (type: 'buy' | 'sell', stock: StockData) => {
     setSelectedStock(stock);
     setTradeType(type);
     setSelectedReason(null);
+    setTradeVolume([50]);
+    setTradeStep('reason');
     setDialogOpen(true);
   };
 
-  const handleConfirmTrade = () => {
-    const reason = tradeReasons[tradeType].find((r) => r.id === selectedReason);
-    if (!reason) {
+  const handleReasonSubmit = () => {
+    if (!selectedReason) {
       toast({
         title: 'Selection Required',
         description: 'Please select a reason for your trade.',
@@ -328,22 +336,39 @@ export default function StocksCard() {
       });
       return;
     }
+    setTradeStep('amount');
+  };
 
-    if (reason.correct) {
+  const handleAmountSubmit = () => {
+    // Generate random risk value between 5 and 70
+    const randomRisk = Math.floor(Math.random() * (70 - 5 + 1)) + 5;
+    setRiskValue(randomRisk);
+    setTradeStep('risk');
+  };
+
+  const handleConfirmTrade = () => {
+    const reason = tradeReasons[tradeType].find((r) => r.id === selectedReason);
+    
+    if (reason?.correct) {
       toast({
-        title: 'Good Call!',
-        description: 'That is a sound reason for making this trade. You earned 50 points!',
-        variant: 'default',
+        title: 'Trade Successful!',
+        description: 'Your virtual portfolio has been updated. You earned 50 points!',
       });
     } else {
       toast({
-        title: 'Think Again!',
+        title: 'Trade Acknowledged',
         description: 'That might not be the best reason. Consider reviewing the lessons on market analysis.',
         variant: 'destructive',
       });
     }
     setDialogOpen(false);
+    setTradeStep(null);
   };
+
+  const closeDialog = () => {
+    setDialogOpen(false);
+    setTradeStep(null);
+  }
 
   const chartData = selectedStock.history[timeRange];
 
@@ -456,32 +481,95 @@ export default function StocksCard() {
       </CardContent>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Why are you making this <span className="capitalize">{tradeType}</span> trade?</DialogTitle>
-            <DialogDescription>
-              Select the reason that best fits your investment strategy. This helps you practice making informed decisions.
-            </DialogDescription>
-          </DialogHeader>
-          <RadioGroup onValueChange={setSelectedReason} value={selectedReason ?? undefined} className="space-y-2 my-4">
-            {tradeReasons[tradeType].map((reason) => (
-              <div key={reason.id} className="flex items-center space-x-2">
-                <RadioGroupItem value={reason.id} id={reason.id} />
-                <Label htmlFor={reason.id}>{reason.label}</Label>
-              </div>
-            ))}
-          </RadioGroup>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" variant="outline">
-                Cancel
-              </Button>
-            </DialogClose>
-            <Button onClick={handleConfirmTrade}>Confirm Trade</Button>
-          </DialogFooter>
+        <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+          {tradeStep === 'reason' && (
+            <>
+              <DialogHeader>
+                <DialogTitle>Why are you making this <span className="capitalize">{tradeType}</span> trade?</DialogTitle>
+                <DialogDescription>
+                  Select the reason that best fits your investment strategy. This helps you practice making informed decisions.
+                </DialogDescription>
+              </DialogHeader>
+              <RadioGroup onValueChange={setSelectedReason} value={selectedReason ?? undefined} className="space-y-2 my-4">
+                {tradeReasons[tradeType].map((reason) => (
+                  <div key={reason.id} className="flex items-center space-x-2">
+                    <RadioGroupItem value={reason.id} id={reason.id} />
+                    <Label htmlFor={reason.id}>{reason.label}</Label>
+                  </div>
+                ))}
+              </RadioGroup>
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={closeDialog}>
+                  Cancel
+                </Button>
+                <Button onClick={handleReasonSubmit}>Next</Button>
+              </DialogFooter>
+            </>
+          )}
+          {tradeStep === 'amount' && (
+             <>
+                <DialogHeader>
+                    <DialogTitle>Select Volume/Amount</DialogTitle>
+                    <DialogDescription>
+                        Choose the number of shares you wish to {tradeType}.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="my-4">
+                    <div className="flex justify-between mb-2">
+                        <span>Shares:</span>
+                        <span className="font-bold">{tradeVolume[0]}</span>
+                    </div>
+                     <Slider
+                        defaultValue={tradeVolume}
+                        max={100}
+                        step={1}
+                        onValueChange={setTradeVolume}
+                    />
+                     <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                        <span>1</span>
+                        <span>100</span>
+                    </div>
+                    <div className="mt-4 text-center">
+                        <p className="font-bold text-lg">
+                            Estimated Cost: ${(tradeVolume[0] * selectedStock.price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                        </p>
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button type="button" variant="outline" onClick={() => setTradeStep('reason')}>
+                        Back
+                    </Button>
+                    <Button onClick={handleAmountSubmit}>Next</Button>
+                </DialogFooter>
+             </>
+          )}
+          {tradeStep === 'risk' && (
+            <>
+                 <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                        <AlertTriangle className="h-6 w-6 text-destructive" />
+                        Confirm Your Trade
+                    </DialogTitle>
+                    <DialogDescription>
+                        Please review the details of your trade before confirming.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="my-4 space-y-2">
+                   <p><strong>Action:</strong> <span className="capitalize">{tradeType}</span> {tradeVolume[0]} shares of {selectedStock.ticker}</p>
+                   <p><strong>Estimated Value:</strong> ${(tradeVolume[0] * selectedStock.price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                   <p className="font-bold text-destructive">Your risk value for this trade is {riskValue}%.</p>
+                   <p>Would you like to proceed?</p>
+                </div>
+                <DialogFooter>
+                    <Button type="button" variant="outline" onClick={closeDialog}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleConfirmTrade}>Confirm Trade</Button>
+                </DialogFooter>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </Card>
   );
 }
-
