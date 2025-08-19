@@ -31,7 +31,7 @@ const achievements = [
 
 export default function AchievementsCard() {
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300">
+    <Card className="hover:shadow-lg transition-shadow duration-300 h-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Medal className="h-5 w-5 text-muted-foreground" />
