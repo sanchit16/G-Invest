@@ -304,11 +304,13 @@ export default function MyPortfolioCard() {
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300">
        <CardHeader>
-        <CardTitle>{selectedStock.name} ({selectedStock.ticker})</CardTitle>
-        <div className="flex justify-between items-center">
-        <CardDescription>
-          Interactive stock performance chart.
-        </CardDescription>
+        <div className="flex justify-between items-start">
+            <div>
+                <CardTitle>My Portfolio</CardTitle>
+                <CardDescription>
+                    {selectedStock.name} ({selectedStock.ticker})
+                </CardDescription>
+            </div>
           <div className="flex items-center gap-2">
             {(['day', 'week', 'month', 'year'] as const).map((range) => (
               <Button
@@ -424,6 +426,7 @@ export default function MyPortfolioCard() {
                   <div key={reason.id} className="flex items-center space-x-2">
                     <RadioGroupItem value={reason.id} id={reason.id} />
                     <Label htmlFor={reason.id}>{reason.label}</Label>
+
                   </div>
                 ))}
               </RadioGroup>
