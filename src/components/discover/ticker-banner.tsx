@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card } from '@/components/ui/card';
@@ -16,12 +17,12 @@ export default function TickerBanner() {
     <div className="relative overflow-hidden">
       <div className="flex animate-marquee hover:pause w-max">
         {indices.concat(indices).map((item, index) => (
-          <Card key={index} className="flex-shrink-0 w-64 mx-2">
-            <div className="p-3">
-              <p className="font-semibold text-sm">{item.name}</p>
+          <Card key={index} className="flex-shrink-0 w-48 mx-2">
+            <div className="p-2">
+              <p className="font-semibold text-xs">{item.name}</p>
               <div className="flex items-baseline gap-2">
-                <p className="font-bold text-lg">{item.price.toLocaleString()}</p>
-                <p className={cn('text-sm font-semibold', item.changeType === 'increase' ? 'text-secondary' : 'text-destructive')}>
+                <p className="font-bold text-base">{item.price.toLocaleString()}</p>
+                <p className={cn('text-xs font-semibold', item.changeType === 'increase' ? 'text-secondary' : 'text-destructive')}>
                   {item.change}
                 </p>
               </div>
