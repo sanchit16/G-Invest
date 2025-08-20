@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -16,6 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const historyData = {
     '1D': [
@@ -40,11 +41,21 @@ const historyData = {
     ],
 }
 
+const tradeReasons = [
+    { id: 'news', label: 'Based on recent news' },
+    { id: 'analysis', label: 'Based on technical analysis' },
+    { id: 'long-term', label: 'Long-term investment strategy' },
+    { id: 'short-term', label: 'Short-term speculation' },
+];
+
 export default function StockDetail() {
   const [timeRange, setTimeRange] = useState<'1D' | '1W' | '1M' | '1Y' | '5Y'>('1D');
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogStep, setDialogStep] = useState(1);
   const [tradeType, setTradeType] = useState<'Buy' | 'Sell'>('Buy');
   const [shares, setShares] = useState(0);
+  const [tradeReason, setTradeReason] = useState('');
+  const [riskValue, setRiskValue] = useState(0);
   const { toast } = useToast();
 
   const currentPrice = 179.63;
@@ -52,23 +63,37 @@ export default function StockDetail() {
 
   const handleTradeClick = (type: 'Buy' | 'Sell') => {
     setTradeType(type);
+    setDialogStep(1);
     setShares(0);
+    setTradeReason('');
     setDialogOpen(true);
   };
 
-  const handleConfirmTrade = () => {
-    if (shares <= 0) {
-        toast({
-            title: 'Invalid Amount',
-            description: 'Please enter a valid number of shares.',
-            variant: 'destructive'
-        });
+  const handleNextStep = () => {
+    if (dialogStep === 1 && !tradeReason) {
+        toast({ title: 'Please select a reason.', variant: 'destructive' });
         return;
     }
+    if (dialogStep === 2 && shares <= 0) {
+        toast({ title: 'Please enter a valid number of shares.', variant: 'destructive' });
+        return;
+    }
+    if (dialogStep === 2) {
+        // Generate random risk value between 5 and 70
+        setRiskValue(Math.floor(Math.random() * (70 - 5 + 1)) + 5);
+    }
+    setDialogStep(prev => prev + 1);
+  };
+
+  const handleConfirmTrade = () => {
     toast({
         title: 'Trade Confirmed!',
         description: `You have successfully ${tradeType === 'Buy' ? 'purchased' : 'sold'} ${shares} shares of GOOGL.`,
     });
+    setDialogOpen(false);
+  }
+
+  const handleCloseDialog = () => {
     setDialogOpen(false);
   }
 
@@ -128,32 +153,78 @@ export default function StockDetail() {
       </Card>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{tradeType} GOOGL</DialogTitle>
-            <DialogDescription>
-              Enter the number of shares you'd like to {tradeType.toLowerCase()}.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
-            <Label htmlFor="shares">Number of Shares</Label>
-            <Input 
-              id="shares" 
-              type="number" 
-              value={shares}
-              onChange={(e) => setShares(Number(e.target.value))}
-              min="0"
-            />
-            <p className="text-lg font-bold">
-              Estimated {tradeType === 'Buy' ? 'Cost' : 'Credit'}: ${estimatedCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </p>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleConfirmTrade}>Confirm {tradeType}</Button>
-          </DialogFooter>
+        <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+          {dialogStep === 1 && (
+            <>
+              <DialogHeader>
+                <DialogTitle>Why are you making this {tradeType.toLowerCase()} trade?</DialogTitle>
+                <DialogDescription>
+                  Understanding your motives is the first step to smart investing.
+                </DialogDescription>
+              </DialogHeader>
+              <RadioGroup value={tradeReason} onValueChange={setTradeReason} className="py-4 space-y-2">
+                {tradeReasons.map(reason => (
+                    <div key={reason.id} className="flex items-center space-x-2">
+                        <RadioGroupItem value={reason.id} id={reason.id} />
+                        <Label htmlFor={reason.id}>{reason.label}</Label>
+                    </div>
+                ))}
+              </RadioGroup>
+              <DialogFooter>
+                <Button variant="outline" onClick={handleCloseDialog}>Cancel</Button>
+                <Button onClick={handleNextStep}>Next</Button>
+              </DialogFooter>
+            </>
+          )}
+
+          {dialogStep === 2 && (
+             <>
+                <DialogHeader>
+                    <DialogTitle>{tradeType} GOOGL</DialogTitle>
+                    <DialogDescription>
+                    Enter the number of shares you'd like to {tradeType.toLowerCase()}.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-2">
+                    <Label htmlFor="shares">Number of Shares</Label>
+                    <Input
+                    id="shares"
+                    type="number"
+                    value={shares || ''}
+                    onChange={(e) => setShares(Number(e.target.value))}
+                    min="0"
+                    />
+                    <p className="text-lg font-bold">
+                    Estimated {tradeType === 'Buy' ? 'Cost' : 'Credit'}: ${estimatedCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                </div>
+                <DialogFooter>
+                    <Button variant="outline" onClick={handleCloseDialog}>Cancel</Button>
+                    <Button onClick={handleNextStep}>Next</Button>
+                </DialogFooter>
+            </>
+          )}
+
+          {dialogStep === 3 && (
+            <>
+                <DialogHeader>
+                    <DialogTitle>Risk Assessment</DialogTitle>
+                </DialogHeader>
+                <div className="py-4 text-center">
+                    <p className="text-lg">Your risk value for this trade is:</p>
+                    <p className="text-5xl font-bold my-4 text-primary">{riskValue}%</p>
+                    <p className="text-muted-foreground">Would you like to proceed?</p>
+                </div>
+                <DialogFooter>
+                    <Button variant="outline" onClick={handleCloseDialog}>Cancel</Button>
+                    <Button onClick={handleConfirmTrade}>Confirm Trade</Button>
+                </DialogFooter>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </>
   );
 }
+
+    
