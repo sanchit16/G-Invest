@@ -66,8 +66,10 @@ export default function HoldingsList() {
                 </TableHeader>
                 <TableBody>
                     {holdings.map(stock => {
-                        const totalValue = stock.shares * stock.price;
-                        const totalCost = stock.shares * stock.purchasePrice;
+                        const currentPrice = stock.price || 0;
+                        const purchasePrice = stock.purchasePrice || 0;
+                        const totalValue = stock.shares * currentPrice;
+                        const totalCost = stock.shares * purchasePrice;
                         const profitLoss = totalValue - totalCost;
                         const profitLossPercent = totalCost > 0 ? (profitLoss / totalCost) * 100 : 0;
                         const isProfit = profitLoss >= 0;
@@ -79,10 +81,10 @@ export default function HoldingsList() {
                                     <div className="text-sm text-muted-foreground">{stock.shares} Shares</div>
                                 </TableCell>
                                 <TableCell className="text-right font-medium">
-                                    ${stock.price.toFixed(2)}
+                                    ${currentPrice.toFixed(2)}
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    ${stock.purchasePrice.toFixed(2)}
+                                    ${purchasePrice.toFixed(2)}
                                 </TableCell>
                                 <TableCell className="text-right font-bold">
                                     ${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
