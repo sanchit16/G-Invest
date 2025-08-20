@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -19,6 +19,7 @@ import { useToast } from '@/hooks/use-toast';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import type { Stock } from '@/app/discover/page';
 import { cn } from '@/lib/utils';
+import type { Holding } from '@/components/dashboard/holdings-list';
 
 type HistoryData = {
   '1D': { name: string; value: number }[];
@@ -53,6 +54,21 @@ const tradeReasons = [
     { id: 'analysis', label: 'Based on technical analysis' },
     { id: 'long-term', label: 'Long-term investment strategy' },
     { id: 'short-term', label: 'Short-term speculation' },
+];
+
+const initialPortfolio = {
+  totalValue: 116281.24,
+  investedValue: 16281.24,
+  remainingBalance: 100000.00,
+  todaysGain: 2130.43,
+  todaysGainPercent: 1.86,
+};
+const initialHoldings: Holding[] = [
+  { ticker: 'GOOGL', name: 'Alphabet Inc.', shares: 10, price: 179.63 },
+  { ticker: 'AAPL', name: 'Apple Inc', shares: 25, price: 214.29 },
+  { ticker: 'TSLA', name: 'Tesla Inc', shares: 15, price: 184.88 },
+  { ticker: 'AMZN', name: 'Amazon.com, Inc.', shares: 5, price: 189.08 },
+  { ticker: 'NVDA', name: 'NVIDIA Corp', shares: 40, price: 135.58 },
 ];
 
 export default function StockDetail({ stock }: { stock: Stock }) {
@@ -94,6 +110,47 @@ export default function StockDetail({ stock }: { stock: Stock }) {
   };
 
   const handleConfirmTrade = () => {
+    // --- Portfolio Update Logic ---
+    const portfolioStr = localStorage.getItem('g-invest-portfolio') || JSON.stringify(initialPortfolio);
+    const holdingsStr = localStorage.getItem('g-invest-holdings') || JSON.stringify(initialHoldings);
+    let portfolio = JSON.parse(portfolioStr);
+    let holdings: Holding[] = JSON.parse(holdingsStr);
+
+    const tradeValue = shares * stock.price;
+    const existingHoldingIndex = holdings.findIndex(h => h.ticker === stock.ticker);
+
+    if (tradeType === 'Buy') {
+        if (portfolio.remainingBalance < tradeValue) {
+            toast({ title: 'Insufficient Funds', description: 'You do not have enough balance to make this purchase.', variant: 'destructive' });
+            return;
+        }
+        portfolio.remainingBalance -= tradeValue;
+        if (existingHoldingIndex > -1) {
+            holdings[existingHoldingIndex].shares += shares;
+        } else {
+            holdings.push({ ticker: stock.ticker, name: stock.name, shares: shares, price: stock.price });
+        }
+    } else { // Sell
+        if (existingHoldingIndex === -1 || holdings[existingHoldingIndex].shares < shares) {
+            toast({ title: 'Insufficient Shares', description: 'You do not own enough shares to sell.', variant: 'destructive' });
+            return;
+        }
+        portfolio.remainingBalance += tradeValue;
+        holdings[existingHoldingIndex].shares -= shares;
+        if (holdings[existingHoldingIndex].shares === 0) {
+            holdings.splice(existingHoldingIndex, 1);
+        }
+    }
+
+    portfolio.investedValue = holdings.reduce((acc, h) => acc + (h.shares * h.price), 0);
+    portfolio.totalValue = portfolio.investedValue + portfolio.remainingBalance;
+
+    localStorage.setItem('g-invest-portfolio', JSON.stringify(portfolio));
+    localStorage.setItem('g-invest-holdings', JSON.stringify(holdings));
+    // Dispatch a storage event to notify other components/tabs
+    window.dispatchEvent(new Event('storage'));
+
+
     toast({
         title: 'Trade Confirmed!',
         description: `You have successfully ${tradeType === 'Buy' ? 'purchased' : 'sold'} ${shares} shares of ${stock.ticker}.`,
@@ -104,6 +161,16 @@ export default function StockDetail({ stock }: { stock: Stock }) {
   const handleCloseDialog = () => {
     setDialogOpen(false);
   }
+
+  // Effect to initialize localStorage if it's empty
+  useEffect(() => {
+    if (!localStorage.getItem('g-invest-portfolio')) {
+      localStorage.setItem('g-invest-portfolio', JSON.stringify(initialPortfolio));
+    }
+    if (!localStorage.getItem('g-invest-holdings')) {
+      localStorage.setItem('g-invest-holdings', JSON.stringify(initialHoldings));
+    }
+  }, []);
 
   return (
     <>
