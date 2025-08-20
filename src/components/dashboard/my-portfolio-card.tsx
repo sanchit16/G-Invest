@@ -505,5 +505,3 @@ export default function MyPortfolioCard() {
     </Card>
   );
 }
-
-    
