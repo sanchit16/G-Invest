@@ -2,10 +2,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '../ui/skeleton';
+import { cn } from '@/lib/utils';
 
 const initialPortfolio = {
   totalValue: 116281.24,
@@ -14,6 +15,8 @@ const initialPortfolio = {
   todaysGain: 2130.43,
   todaysGainPercent: 1.86,
 };
+
+const INITIAL_CAPITAL = 116281.24; // Based on initial invested + remaining
 
 export default function PortfolioSummaryCard() {
   const [portfolio, setPortfolio] = useState(initialPortfolio);
@@ -69,6 +72,10 @@ export default function PortfolioSummaryCard() {
   const investedValue = portfolio?.investedValue || 0;
   const remainingBalance = portfolio?.remainingBalance || 0;
 
+  const totalProfitLoss = totalValue - INITIAL_CAPITAL;
+  const totalProfitLossPercent = INITIAL_CAPITAL > 0 ? (totalProfitLoss / INITIAL_CAPITAL) * 100 : 0;
+  const isProfit = totalProfitLoss >= 0;
+
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300">
       <CardHeader>
@@ -78,12 +85,24 @@ export default function PortfolioSummaryCard() {
       </CardHeader>
       <CardContent>
         <div className="text-4xl font-bold">${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-        <div className="flex items-center text-sm mt-1">
-          <span className="text-secondary-foreground font-semibold flex items-center mr-2">
-            <TrendingUp className="h-4 w-4 mr-1 text-secondary" />
-            +${todaysGain.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </span>
-          <span className="text-muted-foreground">(+{todaysGainPercent.toFixed(2)}% today)</span>
+        <div className="flex items-center text-sm mt-1 flex-wrap gap-x-4">
+          <div className="flex items-center text-sm">
+            <span className={cn(
+                "font-semibold flex items-center mr-2",
+                isProfit ? 'text-secondary' : 'text-destructive'
+            )}>
+              {isProfit ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" />}
+              {isProfit ? '+' : ''}${totalProfitLoss.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </span>
+            <span className="text-muted-foreground">({isProfit ? '+' : ''}{totalProfitLossPercent.toFixed(2)}% all time)</span>
+          </div>
+          <div className="flex items-center text-sm">
+            <span className="text-secondary font-semibold flex items-center mr-2">
+              <TrendingUp className="h-4 w-4 mr-1" />
+              +${todaysGain.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </span>
+            <span className="text-muted-foreground">(+{todaysGainPercent.toFixed(2)}% today)</span>
+          </div>
         </div>
         <Separator className="my-4" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
