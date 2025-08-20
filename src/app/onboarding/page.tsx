@@ -119,6 +119,7 @@ export default function OnboardingPage() {
 
   const handleFinish = () => {
     localStorage.setItem('onboardingAnswers', JSON.stringify(answers));
+    localStorage.setItem('onboardingComplete', 'true');
     console.log("Onboarding complete, answers:", answers);
     router.push('/dashboard-redirect');
   };

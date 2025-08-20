@@ -1,18 +1,30 @@
 
-import { redirect } from 'next/navigation';
+"use client";
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 // On first load, we check if the user has completed onboarding.
-// This would typically be a check against a user profile or a persistent flag.
-// For this prototype, we'll assume a new user and always redirect to onboarding.
-// After onboarding, the user is sent to /dashboard.
-// Subsequent visits should ideally land on /dashboard directly.
-
+// We use localStorage to persist this state across sessions.
 export default function HomePage() {
-  const userHasOnboarded = false; // In a real app, this would be dynamic.
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
-  if (!userHasOnboarded) {
-    redirect('/onboarding');
-  } else {
-    redirect('/dashboard');
-  }
+  useEffect(() => {
+    // Check localStorage only on the client-side
+    const userHasOnboarded = localStorage.getItem('onboardingComplete') === 'true';
+
+    if (!userHasOnboarded) {
+      router.replace('/onboarding');
+    } else {
+      router.replace('/dashboard');
+    }
+  }, [router]);
+
+  // Render a loading state while we determine the redirect
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <p>Loading...</p>
+    </div>
+  );
 }
