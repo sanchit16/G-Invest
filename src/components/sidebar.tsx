@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bot, BookOpen, HelpCircle, LayoutDashboard, DollarSign, Search, MessageSquare } from 'lucide-react';
+import { Bot, BookOpen, HelpCircle, LayoutDashboard, DollarSign, Search, MessageSquare, Award } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -13,6 +13,7 @@ const navItems = [
   { href: '/quizzes', icon: HelpCircle, label: 'Quizzes' },
   { href: '/search', icon: Search, label: 'Concept Search' },
   { href: '/market-chat', icon: MessageSquare, label: 'Market Chat' },
+  { href: '/certificate', icon: Award, label: 'Certificate' },
 ];
 
 export default function Sidebar() {

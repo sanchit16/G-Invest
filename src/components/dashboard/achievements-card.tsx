@@ -1,4 +1,4 @@
-import { Medal, ShieldCheck, Flame, Handshake } from 'lucide-react';
+import { Medal, ShieldCheck, Flame, Handshake, Award } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -25,6 +25,12 @@ const achievements = [
     icon: Medal,
     title: 'Learning Legend',
     description: 'Complete all tutorials in the AI Tutor section.',
+    earned: false,
+  },
+  {
+    icon: Award,
+    title: 'Market Expert',
+    description: 'Achieved by completing all beginner, intermediate, and advanced lessons.',
     earned: false,
   },
 ];
