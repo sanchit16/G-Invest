@@ -1,28 +1,22 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-
-type Stock = {
-  ticker: string;
-  name: string;
-  price: number;
-  change: string;
-  changeType: 'increase' | 'decrease';
-};
+import type { Stock } from '@/app/discover/page';
 
 type StockCategoryListProps = {
   title: string;
   stocks: Stock[];
   className?: string;
+  onStockSelect: (stock: Stock) => void;
 };
 
-export default function StockCategoryList({ title, stocks, className }: StockCategoryListProps) {
+export default function StockCategoryList({ title, stocks, className, onStockSelect }: StockCategoryListProps) {
   return (
     <div className={className}>
       <h2 className="text-lg font-bold mb-3">{title}</h2>
       <div className="space-y-2">
         {stocks.map((stock) => (
-          <Card key={stock.ticker} className="hover:bg-muted/50 cursor-pointer">
+          <Card key={stock.ticker} className="hover:bg-muted/50 cursor-pointer" onClick={() => onStockSelect(stock)}>
             <CardContent className="p-2 flex justify-between items-center">
               <div>
                 <p className="font-bold text-sm">

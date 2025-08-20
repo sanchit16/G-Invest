@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -17,6 +17,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import type { Stock } from '@/app/discover/page';
+import { cn } from '@/lib/utils';
 
 const historyData = {
     '1D': [
@@ -48,7 +50,7 @@ const tradeReasons = [
     { id: 'short-term', label: 'Short-term speculation' },
 ];
 
-export default function StockDetail() {
+export default function StockDetail({ stock }: { stock: Stock }) {
   const [timeRange, setTimeRange] = useState<'1D' | '1W' | '1M' | '1Y' | '5Y'>('1D');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogStep, setDialogStep] = useState(1);
@@ -58,8 +60,7 @@ export default function StockDetail() {
   const [riskValue, setRiskValue] = useState(0);
   const { toast } = useToast();
 
-  const currentPrice = 179.63;
-  const estimatedCost = shares * currentPrice;
+  const estimatedCost = shares * stock.price;
 
   const handleTradeClick = (type: 'Buy' | 'Sell') => {
     setTradeType(type);
@@ -88,7 +89,7 @@ export default function StockDetail() {
   const handleConfirmTrade = () => {
     toast({
         title: 'Trade Confirmed!',
-        description: `You have successfully ${tradeType === 'Buy' ? 'purchased' : 'sold'} ${shares} shares of GOOGL.`,
+        description: `You have successfully ${tradeType === 'Buy' ? 'purchased' : 'sold'} ${shares} shares of ${stock.ticker}.`,
     });
     setDialogOpen(false);
   }
@@ -101,10 +102,15 @@ export default function StockDetail() {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Alphabet Inc. (GOOGL)</CardTitle>
+          <CardTitle>{stock.name} ({stock.ticker})</CardTitle>
           <CardDescription>
-            <span className="text-3xl font-bold text-foreground">$179.63</span>
-            <span className="ml-2 text-base font-semibold text-secondary">+2.13 (+1.20%)</span>
+            <span className="text-3xl font-bold text-foreground">${stock.price.toFixed(2)}</span>
+            <span className={cn(
+                "ml-2 text-base font-semibold",
+                stock.changeType === 'increase' ? 'text-secondary' : 'text-destructive'
+            )}>
+                {stock.change}
+            </span>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -180,7 +186,7 @@ export default function StockDetail() {
           {dialogStep === 2 && (
              <>
                 <DialogHeader>
-                    <DialogTitle>{tradeType} GOOGL</DialogTitle>
+                    <DialogTitle>{tradeType} {stock.ticker}</DialogTitle>
                     <DialogDescription>
                     Enter the number of shares you'd like to {tradeType.toLowerCase()}.
                     </DialogDescription>
@@ -226,5 +232,3 @@ export default function StockDetail() {
     </>
   );
 }
-
-    
