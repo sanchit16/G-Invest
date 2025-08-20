@@ -19,19 +19,21 @@ type StockCategoryListProps = {
 export default function StockCategoryList({ title, stocks, className }: StockCategoryListProps) {
   return (
     <div className={className}>
-      <h2 className="text-xl font-bold mb-4">{title}</h2>
-      <div className="space-y-3">
+      <h2 className="text-lg font-bold mb-3">{title}</h2>
+      <div className="space-y-2">
         {stocks.map((stock) => (
           <Card key={stock.ticker} className="hover:bg-muted/50 cursor-pointer">
-            <CardContent className="p-3 flex justify-between items-center">
+            <CardContent className="p-2 flex justify-between items-center">
               <div>
-                <p className="font-bold">{stock.ticker}</p>
-                <p className="text-sm text-muted-foreground truncate max-w-40">{stock.name}</p>
+                <p className="font-bold text-sm">
+                  {stock.ticker}
+                  <span className="text-xs text-muted-foreground font-normal ml-2 truncate">{stock.name}</span>
+                </p>
               </div>
               <div className="text-right">
-                <p className="font-semibold">${stock.price.toFixed(2)}</p>
+                <p className="font-semibold text-sm">${stock.price.toFixed(2)}</p>
                 <p className={cn(
-                  'text-sm font-semibold',
+                  'text-xs font-semibold',
                   stock.changeType === 'increase' ? 'text-secondary' : 'text-destructive'
                 )}>
                   {stock.change}
