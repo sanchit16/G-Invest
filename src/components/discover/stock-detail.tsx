@@ -64,11 +64,11 @@ const initialPortfolio = {
   todaysGainPercent: 1.86,
 };
 const initialHoldings: Holding[] = [
-  { ticker: 'GOOGL', name: 'Alphabet Inc.', shares: 10, price: 179.63, purchasePrice: 175.20 },
-  { ticker: 'AAPL', name: 'Apple Inc', shares: 25, price: 214.29, purchasePrice: 205.50 },
-  { ticker: 'TSLA', name: 'Tesla Inc', shares: 15, price: 184.88, purchasePrice: 190.10 },
-  { ticker: 'AMZN', name: 'Amazon.com, Inc.', shares: 5, price: 189.08, purchasePrice: 182.40 },
-  { ticker: 'NVDA', name: 'NVIDIA Corp', shares: 40, price: 135.58, purchasePrice: 120.80 },
+    { ticker: 'GOOGL', name: 'Alphabet Inc.', shares: 10, price: 179.63, purchasePrice: 175.20 },
+    { ticker: 'AAPL', name: 'Apple Inc', shares: 25, price: 214.29, purchasePrice: 220.15 },
+    { ticker: 'TSLA', name: 'Tesla Inc', shares: 15, price: 184.88, purchasePrice: 190.10 },
+    { ticker: 'AMZN', name: 'Amazon.com, Inc.', shares: 5, price: 189.08, purchasePrice: 182.40 },
+    { ticker: 'NVDA', name: 'NVIDIA Corp', shares: 40, price: 135.58, purchasePrice: 125.80 },
 ];
 
 export default function StockDetail({ stock }: { stock: Stock }) {
