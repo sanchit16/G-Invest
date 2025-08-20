@@ -15,10 +15,12 @@ export default function DashboardPage() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <PortfolioCard />
           <ReadinessCard />
-          <ProgressCard />
+        </div>
+        <div className="mt-6 grid gap-6 md:grid-cols-2">
+           <ProgressCard />
+           <AchievementsCard />
         </div>
         <div className="mt-6 grid grid-cols-1 gap-6">
-          <AchievementsCard />
           <MyPortfolioCard />
           <LeaderboardCard />
         </div>
