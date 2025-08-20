@@ -5,7 +5,6 @@ import { useState } from 'react';
 import Header from '@/components/header';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
-import TickerBanner from '@/components/discover/ticker-banner';
 import StockCategoryList from '@/components/discover/stock-category-list';
 import StockDetail from '@/components/discover/stock-detail';
 
@@ -53,8 +52,6 @@ export default function DiscoverPage() {
             className="pl-10 text-base"
           />
         </div>
-
-        <TickerBanner />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <StockCategoryList title="Top Movers Today" stocks={topMovers} onStockSelect={handleStockSelect} />
