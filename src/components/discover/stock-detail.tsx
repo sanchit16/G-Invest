@@ -63,13 +63,23 @@ const initialPortfolio = {
   todaysGain: 2130.43,
   todaysGainPercent: 1.86,
 };
-const initialHoldings: Holding[] = [
-    { ticker: 'GOOGL', name: 'Alphabet Inc.', shares: 10, price: 179.63, purchasePrice: 175.20 },
-    { ticker: 'AAPL', name: 'Apple Inc', shares: 25, price: 214.29, purchasePrice: 220.15 },
-    { ticker: 'TSLA', name: 'Tesla Inc', shares: 15, price: 184.88, purchasePrice: 190.10 },
-    { ticker: 'AMZN', name: 'Amazon.com, Inc.', shares: 5, price: 189.08, purchasePrice: 182.40 },
-    { ticker: 'NVDA', name: 'NVIDIA Corp', shares: 40, price: 135.58, purchasePrice: 125.80 },
+
+const initialHoldingsData = [
+    { ticker: 'GOOGL', name: 'Alphabet Inc.', shares: 10, price: 179.63 },
+    { ticker: 'AAPL', name: 'Apple Inc', shares: 25, price: 214.29 },
+    { ticker: 'TSLA', name: 'Tesla Inc', shares: 15, price: 184.88 },
+    { ticker: 'AMZN', name: 'Amazon.com, Inc.', shares: 5, price: 189.08 },
+    { ticker: 'NVDA', name: 'NVIDIA Corp', shares: 40, price: 135.58 },
 ];
+
+const withRandomPurchasePrice = (stocks: Omit<Holding, 'purchasePrice'>[]): Holding[] => {
+    return stocks.map(stock => ({
+        ...stock,
+        purchasePrice: stock.price * (1 + (Math.random() - 0.5) * 0.1),
+    }));
+};
+
+const initialHoldings: Holding[] = withRandomPurchasePrice(initialHoldingsData);
 
 export default function StockDetail({ stock }: { stock: Stock }) {
   const [timeRange, setTimeRange] = useState<'1D' | '1W' | '1M' | '1Y' | '5Y'>('1D');
