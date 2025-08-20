@@ -14,6 +14,14 @@ const initialHoldingsData = [
     { ticker: 'NVDA', name: 'NVIDIA Corp', shares: 40, price: 135.58 },
 ];
 
+export type Holding = {
+    ticker: string;
+    name: string;
+    shares: number;
+    price: number; // Current market price
+    purchasePrice: number; // Average purchase price
+};
+
 // Function to generate a random purchase price around the current price
 const withRandomPurchasePrice = (stocks: Omit<Holding, 'purchasePrice'>[]): Holding[] => {
     return stocks.map(stock => ({
@@ -25,13 +33,6 @@ const withRandomPurchasePrice = (stocks: Omit<Holding, 'purchasePrice'>[]): Hold
 
 const initialHoldings: Holding[] = withRandomPurchasePrice(initialHoldingsData);
 
-export type Holding = {
-    ticker: string;
-    name: string;
-    shares: number;
-    price: number; // Current market price
-    purchasePrice: number; // Average purchase price
-};
 
 export default function HoldingsList() {
     const [holdings, setHoldings] = useState<Holding[]>([]);
