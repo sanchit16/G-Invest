@@ -66,7 +66,7 @@ export default function HoldingsList() {
                     <p className="font-semibold">${(stock.shares * stock.price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                     </div>
                 </CardContent>
-                </Card>>
+                </Card>
             ))
           )}
         </div>
