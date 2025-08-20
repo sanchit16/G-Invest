@@ -6,6 +6,7 @@ import ProgressCard from '@/components/dashboard/progress-card';
 import AchievementsCard from '@/components/dashboard/achievements-card';
 import FinancialGoalCard from '@/components/dashboard/financial-goal-card';
 import MyPortfolioCard from '@/components/dashboard/my-portfolio-card';
+import LeaderboardCard from '@/components/dashboard/leaderboard-card';
 
 export default function DashboardPage() {
   return (
@@ -18,11 +19,12 @@ export default function DashboardPage() {
           <ReadinessCard />
           <ProgressCard />
         </div>
-        <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <MyPortfolioCard />
+        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <MyPortfolioCard />
+          <div className="space-y-6">
+            <AchievementsCard />
+            <LeaderboardCard />
           </div>
-          <AchievementsCard />
         </div>
       </main>
     </div>
