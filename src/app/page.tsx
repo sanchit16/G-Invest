@@ -14,11 +14,12 @@ export default function HomePage() {
     // Check localStorage only on the client-side
     const userHasOnboarded = localStorage.getItem('onboardingComplete') === 'true';
 
-    if (!userHasOnboarded) {
-      router.replace('/onboarding');
-    } else {
+    if (userHasOnboarded) {
       router.replace('/dashboard');
+    } else {
+      router.replace('/onboarding');
     }
+    // We don't strictly need to setLoading(false) as the redirect will unmount this component
   }, [router]);
 
   // Render a loading state while we determine the redirect
