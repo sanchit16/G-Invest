@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -20,28 +20,33 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import type { Stock } from '@/app/discover/page';
 import { cn } from '@/lib/utils';
 
-const historyData = {
-    '1D': [
-        { name: '9am', value: 178.50 }, { name: '10am', value: 179.00 }, { name: '11am', value: 179.20 },
-        { name: '12pm', value: 179.80 }, { name: '1pm', value: 179.40 }, { name: '2pm', value: 179.63 },
-    ],
-    '1W': [
-        { name: 'Mon', value: 175.20 }, { name: 'Tue', value: 176.80 }, { name: 'Wed', value: 178.10 },
-        { name: 'Thu', value: 177.50 }, { name: 'Fri', value: 179.63 },
-    ],
-    '1M': [
-        { name: 'W1', value: 170.10 }, { name: 'W2', value: 172.50 }, { name: 'W3', value: 175.80 },
-        { name: 'W4', value: 179.63 },
-    ],
-    '1Y': [
-        { name: 'Jan', value: 130.00 }, { name: 'Mar', value: 150.50 }, { name: 'Jun', value: 165.20 },
-        { name: 'Sep', value: 175.80 }, { name: 'Dec', value: 179.63 },
-    ],
-     '5Y': [
-        { name: '2020', value: 60.00 }, { name: '2021', value: 90.50 }, { name: '2022', value: 120.20 },
-        { name: '2023', value: 150.80 }, { name: '2024', value: 179.63 },
-    ],
-}
+type HistoryData = {
+  '1D': { name: string; value: number }[];
+  '1W': { name: string; value: number }[];
+  '1M': { name: string; value: number }[];
+  '1Y': { name: string; value: number }[];
+  '5Y': { name: string; value: number }[];
+};
+
+const generateHistoryData = (basePrice: number): HistoryData => {
+  const generateData = (points: number, period: 'hours' | 'days' | 'weeks' | 'years', timeLabels: string[]) => {
+    let price = basePrice * (0.8 + Math.random() * 0.4); // Start at a variation of the base price
+    return timeLabels.map(label => {
+      const fluctuation = price * (Math.random() - 0.49) * 0.1; // Smaller, more frequent changes
+      price += fluctuation;
+      return { name: label, value: parseFloat(price.toFixed(2)) };
+    });
+  };
+
+  return {
+    '1D': generateData(6, 'hours', ['9am', '10am', '11am', '12pm', '1pm', '2pm']),
+    '1W': generateData(5, 'days', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']),
+    '1M': generateData(4, 'weeks', ['W1', 'W2', 'W3', 'W4']),
+    '1Y': generateData(5, 'years', ['Jan', 'Mar', 'Jun', 'Sep', 'Dec']),
+    '5Y': generateData(5, 'years', ['2020', '2021', '2022', '2023', '2024']),
+  };
+};
+
 
 const tradeReasons = [
     { id: 'news', label: 'Based on recent news' },
@@ -59,6 +64,8 @@ export default function StockDetail({ stock }: { stock: Stock }) {
   const [tradeReason, setTradeReason] = useState('');
   const [riskValue, setRiskValue] = useState(0);
   const { toast } = useToast();
+  
+  const historyData = useMemo(() => generateHistoryData(stock.price), [stock]);
 
   const estimatedCost = shares * stock.price;
 
