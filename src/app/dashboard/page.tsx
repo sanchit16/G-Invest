@@ -19,12 +19,10 @@ export default function DashboardPage() {
           <ReadinessCard />
           <ProgressCard />
         </div>
-        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="mt-6 grid grid-cols-1 gap-6">
+          <AchievementsCard />
           <MyPortfolioCard />
-          <div className="space-y-6">
-            <AchievementsCard />
-            <LeaderboardCard />
-          </div>
+          <LeaderboardCard />
         </div>
       </main>
     </div>
