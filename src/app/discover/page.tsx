@@ -41,8 +41,10 @@ export default function DiscoverPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-8 space-y-8 lg:space-y-0">
             <div className="space-y-8">
-                <StockCategoryList title="Top Movers Today" stocks={topMovers} />
-                <StockCategoryList title="Popular ETFs" stocks={popularETFs} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <StockCategoryList title="Top Movers Today" stocks={topMovers} />
+                    <StockCategoryList title="Popular ETFs" stocks={popularETFs} />
+                </div>
                 <StockCategoryList title="Most Followed on G-Invest" stocks={mostFollowed} />
             </div>
             <div>
