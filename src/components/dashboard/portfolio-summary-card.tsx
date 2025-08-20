@@ -63,6 +63,12 @@ export default function PortfolioSummaryCard() {
     )
   }
 
+  const totalValue = portfolio?.totalValue || 0;
+  const todaysGain = portfolio?.todaysGain || 0;
+  const todaysGainPercent = portfolio?.todaysGainPercent || 0;
+  const investedValue = portfolio?.investedValue || 0;
+  const remainingBalance = portfolio?.remainingBalance || 0;
+
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300">
       <CardHeader>
@@ -71,23 +77,23 @@ export default function PortfolioSummaryCard() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-4xl font-bold">${portfolio.totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+        <div className="text-4xl font-bold">${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
         <div className="flex items-center text-sm mt-1">
           <span className="text-secondary-foreground font-semibold flex items-center mr-2">
             <TrendingUp className="h-4 w-4 mr-1 text-secondary" />
-            +${portfolio.todaysGain.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            +${todaysGain.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
-          <span className="text-muted-foreground">(+{portfolio.todaysGainPercent.toFixed(2)}% today)</span>
+          <span className="text-muted-foreground">(+{todaysGainPercent.toFixed(2)}% today)</span>
         </div>
         <Separator className="my-4" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <p className="text-sm text-muted-foreground">Invested</p>
-                <p className="text-xl font-semibold">${portfolio.investedValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                <p className="text-xl font-semibold">${investedValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
             </div>
             <div>
                 <p className="text-sm text-muted-foreground">Remaining Balance</p>
-                <p className="text-xl font-semibold">${portfolio.remainingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                <p className="text-xl font-semibold">${remainingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
             </div>
         </div>
       </CardContent>
