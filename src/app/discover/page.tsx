@@ -28,7 +28,7 @@ export default function DiscoverPage() {
   return (
     <div className="flex flex-1 flex-col bg-slate-50/50 dark:bg-slate-900/50">
       <Header title="Discover" />
-      <main className="flex-1 p-4 md:p-6 lg:p-8 space-y-6">
+      <main className="flex-1 p-4 md:p-6 space-y-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
@@ -39,7 +39,7 @@ export default function DiscoverPage() {
 
         <TickerBanner />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <StockCategoryList title="Top Movers Today" stocks={topMovers} />
             <StockCategoryList title="Popular ETFs" stocks={popularETFs} />
             <StockCategoryList title="Most Followed on G-Invest" stocks={mostFollowed} />
