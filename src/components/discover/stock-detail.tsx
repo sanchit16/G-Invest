@@ -64,11 +64,11 @@ const initialPortfolio = {
   todaysGainPercent: 1.86,
 };
 const initialHoldings: Holding[] = [
-  { ticker: 'GOOGL', name: 'Alphabet Inc.', shares: 10, price: 179.63 },
-  { ticker: 'AAPL', name: 'Apple Inc', shares: 25, price: 214.29 },
-  { ticker: 'TSLA', name: 'Tesla Inc', shares: 15, price: 184.88 },
-  { ticker: 'AMZN', name: 'Amazon.com, Inc.', shares: 5, price: 189.08 },
-  { ticker: 'NVDA', name: 'NVIDIA Corp', shares: 40, price: 135.58 },
+  { ticker: 'GOOGL', name: 'Alphabet Inc.', shares: 10, price: 179.63, purchasePrice: 175.20 },
+  { ticker: 'AAPL', name: 'Apple Inc', shares: 25, price: 214.29, purchasePrice: 205.50 },
+  { ticker: 'TSLA', name: 'Tesla Inc', shares: 15, price: 184.88, purchasePrice: 190.10 },
+  { ticker: 'AMZN', name: 'Amazon.com, Inc.', shares: 5, price: 189.08, purchasePrice: 182.40 },
+  { ticker: 'NVDA', name: 'NVIDIA Corp', shares: 40, price: 135.58, purchasePrice: 120.80 },
 ];
 
 export default function StockDetail({ stock }: { stock: Stock }) {
@@ -126,9 +126,14 @@ export default function StockDetail({ stock }: { stock: Stock }) {
         }
         portfolio.remainingBalance -= tradeValue;
         if (existingHoldingIndex > -1) {
-            holdings[existingHoldingIndex].shares += shares;
+            const existingHolding = holdings[existingHoldingIndex];
+            const currentTotalValue = existingHolding.shares * existingHolding.purchasePrice;
+            const newTotalValue = currentTotalValue + tradeValue;
+            const newTotalShares = existingHolding.shares + shares;
+            existingHolding.purchasePrice = newTotalValue / newTotalShares;
+            existingHolding.shares = newTotalShares;
         } else {
-            holdings.push({ ticker: stock.ticker, name: stock.name, shares: shares, price: stock.price });
+            holdings.push({ ticker: stock.ticker, name: stock.name, shares: shares, price: stock.price, purchasePrice: stock.price });
         }
     } else { // Sell
         if (existingHoldingIndex === -1 || holdings[existingHoldingIndex].shares < shares) {
@@ -141,9 +146,21 @@ export default function StockDetail({ stock }: { stock: Stock }) {
             holdings.splice(existingHoldingIndex, 1);
         }
     }
+    
+    // Update current price for all holdings to reflect market changes
+    holdings.forEach(h => {
+        if (h.ticker === stock.ticker) {
+            h.price = stock.price;
+        } else {
+            // In a real app, you'd fetch current prices for all holdings.
+            // For now, we'll just simulate a small random change.
+            h.price *= (1 + (Math.random() - 0.5) * 0.02);
+        }
+    });
 
-    portfolio.investedValue = holdings.reduce((acc, h) => acc + (h.shares * h.price), 0);
-    portfolio.totalValue = portfolio.investedValue + portfolio.remainingBalance;
+    portfolio.investedValue = holdings.reduce((acc, h) => acc + (h.shares * h.purchasePrice), 0);
+    const currentMarketValue = holdings.reduce((acc, h) => acc + (h.shares * h.price), 0);
+    portfolio.totalValue = currentMarketValue + portfolio.remainingBalance;
 
     localStorage.setItem('g-invest-portfolio', JSON.stringify(portfolio));
     localStorage.setItem('g-invest-holdings', JSON.stringify(holdings));
