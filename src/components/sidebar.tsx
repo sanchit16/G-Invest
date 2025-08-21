@@ -3,14 +3,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bot, BookOpen, HelpCircle, LayoutDashboard, DollarSign, Search, Compass, Award, MessageSquare } from 'lucide-react';
+import { Bot, BookOpen, HelpCircle, LayoutDashboard, DollarSign, Compass, Award, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 const navItems = [
+  { href: '/lessons', icon: BookOpen, label: 'AI Tutor' },
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { href: '/discover', icon: Compass, label: 'Discover' },
-  { href: '/lessons', icon: BookOpen, label: 'AI Tutor' },
   { href: '/quizzes', icon: HelpCircle, label: 'Quizzes' },
   { href: '/chat', icon: MessageSquare, label: 'Market Chat' },
   { href: '/certificate', icon: Award, label: 'Certificate' },
