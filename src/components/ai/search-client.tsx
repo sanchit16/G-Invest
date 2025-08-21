@@ -1,11 +1,11 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Search, Bot, Sparkles, AlertTriangle } from 'lucide-react';
+import { Search, Bot, Sparkles, AlertTriangle, KeyRound } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { financialConceptSearch, type FinancialConceptSearchOutput } from '@/ai/flows/financial-concept-search';
 import { Skeleton } from '../ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   concept: z.string().min(2, 'Concept must be at least 2 characters.'),
@@ -27,6 +28,8 @@ export default function SearchClient() {
   const [result, setResult] = useState<FinancialConceptSearchOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState<string>('');
+  const { toast } = useToast();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -36,6 +39,15 @@ export default function SearchClient() {
   });
 
   async function onSubmit(values: FormValues) {
+    if (!apiKey) {
+        toast({
+            title: "API Key Required",
+            description: "Please enter your Generative AI API key to use Concept Search.",
+            variant: "destructive",
+        });
+        return;
+    }
+
     setIsLoading(true);
     setResult(null);
     setError(null);
@@ -50,8 +62,8 @@ export default function SearchClient() {
       console.error(e);
       if (e.message?.includes('SERVICE_DISABLED')) {
         setError('The Concept Search is being set up. This can take a few minutes. Please try again shortly.');
-      } else if (e.message?.includes('API_KEY_SERVICE_BLOCKED')) {
-        setError('The request is blocked. Please check your API key restrictions in the Google Cloud Console and ensure the "Generative Language API" is allowed.');
+      } else if (e.message?.includes('API_KEY_SERVICE_BLOCKED') || e.message?.includes('API key not valid')) {
+        setError('The request is blocked. Please check your API key and ensure the "Generative Language API" is enabled in the Google Cloud Console.');
       } else {
         setError('An unexpected error occurred. Please try again.');
       }
@@ -59,6 +71,15 @@ export default function SearchClient() {
       setIsLoading(false);
     }
   }
+
+  // This is a temporary solution for the prototype environment.
+  // In a real application, you would use a backend to securely manage API keys.
+  useEffect(() => {
+    if (apiKey) {
+          (window as any).__GEMINI_API_KEY = apiKey;
+    }
+  }, [apiKey]);
+
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -73,6 +94,15 @@ export default function SearchClient() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+            <div className="flex items-center gap-2 mb-4">
+                <KeyRound className="h-5 w-5 text-muted-foreground" />
+                <Input 
+                    type="password"
+                    placeholder="Enter your Generative AI API Key here"
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                />
+            </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start gap-4">
               <FormField
@@ -117,7 +147,7 @@ export default function SearchClient() {
       {error && (
          <Alert variant="destructive" className="mt-6">
             <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>Action Required</AlertTitle>
+            <AlertTitle>Error</AlertTitle>
             <AlertDescription>
               {error}
             </AlertDescription>
@@ -140,5 +170,3 @@ export default function SearchClient() {
     </div>
   );
 }
-
-    

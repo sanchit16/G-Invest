@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bot, BookOpen, HelpCircle, LayoutDashboard, DollarSign, Search, Compass, Award, Info } from 'lucide-react';
+import { Bot, BookOpen, HelpCircle, LayoutDashboard, DollarSign, Search, Compass, Award, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -13,6 +13,7 @@ const navItems = [
   { href: '/lessons', icon: BookOpen, label: 'AI Tutor' },
   { href: '/quizzes', icon: HelpCircle, label: 'Quizzes' },
   { href: '/search', icon: Search, label: 'Concept Search' },
+  { href: '/chat', icon: MessageSquare, label: 'Market Chat' },
   { href: '/certificate', icon: Award, label: 'Certificate' },
 ];
 

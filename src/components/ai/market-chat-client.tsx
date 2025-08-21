@@ -1,11 +1,11 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Bot, Sparkles, AlertTriangle, MessageSquare } from 'lucide-react';
+import { Bot, Sparkles, AlertTriangle, MessageSquare, KeyRound } from 'lucide-react';
 
 import { stockMarketChat } from '@/ai/flows/stock-market-chat';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,6 +14,7 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Skeleton } from '../ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
 
 const chatFormSchema = z.object({
   message: z.string().min(2, 'Your message must be at least 2 characters.'),
@@ -24,6 +25,8 @@ export default function MarketChatClient() {
     const [conversation, setConversation] = useState<{ question: string; answer: string }[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [apiKey, setApiKey] = useState<string>('');
+    const { toast } = useToast();
 
     const form = useForm<ChatFormValues>({
         resolver: zodResolver(chatFormSchema),
@@ -33,6 +36,15 @@ export default function MarketChatClient() {
     });
 
     async function onSubmit(values: ChatFormValues) {
+        if (!apiKey) {
+            toast({
+                title: "API Key Required",
+                description: "Please enter your Generative AI API key to use the Market Chat.",
+                variant: "destructive",
+            });
+            return;
+        }
+        
         setIsLoading(true);
         setError(null);
         try {
@@ -43,8 +55,8 @@ export default function MarketChatClient() {
             form.reset();
         } catch (e: any) {
             console.error(e);
-            if (e.message?.includes('API_KEY_SERVICE_BLOCKED')) {
-                setError('The request is blocked. Please check your API key restrictions in the Google Cloud Console and ensure the "Generative Language API" is allowed.');
+            if (e.message?.includes('API_KEY_SERVICE_BLOCKED') || e.message?.includes('API key not valid')) {
+                setError('The request is blocked. Please check your API key and ensure the "Generative Language API" is enabled in the Google Cloud Console.');
             } else {
                 setError('An unexpected error occurred. Please try again.');
             }
@@ -52,6 +64,15 @@ export default function MarketChatClient() {
             setIsLoading(false);
         }
     }
+    
+    // This is a temporary solution for the prototype environment.
+    // In a real application, you would use a backend to securely manage API keys.
+    useEffect(() => {
+        if (apiKey) {
+             (window as any).__GEMINI_API_KEY = apiKey;
+        }
+    }, [apiKey]);
+
 
     return (
         <div className="max-w-3xl mx-auto">
@@ -65,6 +86,16 @@ export default function MarketChatClient() {
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
+                        <div className="flex items-center gap-2">
+                            <KeyRound className="h-5 w-5 text-muted-foreground" />
+                            <Input 
+                                type="password"
+                                placeholder="Enter your Generative AI API Key here"
+                                value={apiKey}
+                                onChange={(e) => setApiKey(e.target.value)}
+                            />
+                        </div>
+
                         <div className="space-y-2 max-h-80 overflow-y-auto p-4 rounded-md bg-muted/50 border">
                             {conversation.length === 0 && <p className="text-center text-sm text-muted-foreground">Ask a question to start the conversation.</p>}
                             {conversation.map((entry, index) => (
@@ -110,7 +141,7 @@ export default function MarketChatClient() {
                         {error && (
                             <Alert variant="destructive">
                                 <AlertTriangle className="h-4 w-4" />
-                                <AlertTitle>Action Required</AlertTitle>
+                                <AlertTitle>Error</AlertTitle>
                                 <AlertDescription>{error}</AlertDescription>
                             </Alert>
                         )}

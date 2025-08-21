@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from 'react';
-import { Search } from 'lucide-react';
+import { Search, KeyRound } from 'lucide-react';
 import debounce from 'lodash.debounce';
 
 import Header from '@/components/header';
@@ -11,6 +11,7 @@ import StockCategoryList from '@/components/discover/stock-category-list';
 import StockDetail from '@/components/discover/stock-detail';
 import { stockSearch } from '@/ai/flows/stock-search';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
 
 const initialTopMovers = [
   { ticker: 'TSLA', name: 'Tesla Inc', price: 184.88, change: '+5.76%', changeType: 'increase' as const },
@@ -43,12 +44,23 @@ export default function DiscoverPage() {
   const [searchResults, setSearchResults] = useState<Stock[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [apiKey, setApiKey] = useState<string>('');
+  const { toast } = useToast();
 
   const handleStockSelect = (stock: Stock) => {
     setSelectedStock(stock);
   };
 
   const performSearch = async (query: string) => {
+    if (!apiKey) {
+      toast({
+          title: "API Key Required",
+          description: "Please enter your Generative AI API key to use the search functionality.",
+          variant: "destructive",
+      });
+      return;
+    }
+
     if (query.length < 2) {
       setSearchResults([]);
       setIsSearching(false);
@@ -56,17 +68,23 @@ export default function DiscoverPage() {
     }
     setIsSearching(true);
     try {
+      (window as any).__GEMINI_API_KEY = apiKey;
       const result = await stockSearch({ query });
       setSearchResults(result.results);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Search failed:", error);
+      if (error.message?.includes('API_KEY_SERVICE_BLOCKED') || error.message?.includes('API key not valid')) {
+        toast({ title: 'Invalid API Key', description: 'Please check your API key and try again.', variant: 'destructive' });
+      } else {
+        toast({ title: 'Search Failed', description: 'An unexpected error occurred.', variant: 'destructive' });
+      }
       setSearchResults([]);
     } finally {
       setIsSearching(false);
     }
   };
 
-  const debouncedSearch = useMemo(() => debounce(performSearch, 300), []);
+  const debouncedSearch = useMemo(() => debounce(performSearch, 300), [apiKey]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
@@ -80,7 +98,17 @@ export default function DiscoverPage() {
     <div className="flex flex-1 flex-col bg-slate-50/50 dark:bg-slate-900/50">
       <Header title="Discover" />
       <main className="flex-1 p-4 md:p-6 space-y-2">
-        <div className="relative mb-4">
+        <div className="flex items-center gap-2 mb-4">
+            <KeyRound className="h-5 w-5 text-muted-foreground" />
+            <Input 
+                type="password"
+                placeholder="Enter your Generative AI API Key to enable search"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                className="text-base"
+            />
+        </div>
+        <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
             placeholder="Search by company name or ticker..."
