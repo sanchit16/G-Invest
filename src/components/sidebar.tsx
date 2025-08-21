@@ -29,7 +29,7 @@ export default function Sidebar() {
     <aside className="hidden md:flex md:flex-col md:w-64 bg-card border-r shrink-0">
       <div className="flex flex-col h-full">
         <div className="p-4 border-b">
-          <Link href="/dashboard" className="flex items-center gap-2 font-bold text-lg text-primary">
+          <Link href="/onboarding" className="flex items-center gap-2 font-bold text-lg text-primary">
             <DollarSign className="h-7 w-7 stroke-[2.5]" />
             <span>G-Invest</span>
           </Link>
