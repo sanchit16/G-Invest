@@ -11,7 +11,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check localStorage only on the client-side
+    // This effect runs only on the client, where localStorage is available.
     const userHasOnboarded = localStorage.getItem('onboardingComplete') === 'true';
 
     if (userHasOnboarded) {
@@ -19,10 +19,10 @@ export default function HomePage() {
     } else {
       router.replace('/onboarding');
     }
-    // We don't strictly need to setLoading(false) as the redirect will unmount this component
+    // No need to setLoading(false) as the redirect will unmount this component.
   }, [router]);
 
-  // Render a loading state while we determine the redirect
+  // Render a loading state while we determine where to redirect the user.
   return (
     <div className="flex items-center justify-center min-h-screen">
       <p>Loading...</p>
