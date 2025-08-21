@@ -14,7 +14,6 @@ const navItems = [
   { href: '/quizzes', icon: HelpCircle, label: 'Quizzes' },
   { href: '/search', icon: Search, label: 'Concept Search' },
   { href: '/certificate', icon: Award, label: 'Certificate' },
-  { href: '/how-it-works', icon: Info, label: 'How AI Works' },
 ];
 
 export default function Sidebar() {
