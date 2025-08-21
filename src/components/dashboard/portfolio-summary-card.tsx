@@ -44,7 +44,7 @@ export default function PortfolioSummaryCard() {
         <Card>
             <CardHeader>
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                Total Portfolio Value
+                Total Portfolio Value (Virtual)
                 </CardTitle>
             </CardHeader>
             <CardContent>
@@ -80,7 +80,7 @@ export default function PortfolioSummaryCard() {
     <Card className="hover:shadow-lg transition-shadow duration-300">
       <CardHeader>
         <CardTitle className="text-sm font-medium text-muted-foreground">
-          Total Portfolio Value
+          Total Portfolio Value (Virtual)
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -107,11 +107,11 @@ export default function PortfolioSummaryCard() {
         <Separator className="my-4" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <p className="text-sm text-muted-foreground">Invested</p>
+                <p className="text-sm text-muted-foreground">Invested Funds (Virtual)</p>
                 <p className="text-xl font-semibold">${investedValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
             </div>
             <div>
-                <p className="text-sm text-muted-foreground">Remaining Balance</p>
+                <p className="text-sm text-muted-foreground">Remaining Balance (Virtual)</p>
                 <p className="text-xl font-semibold">${remainingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
             </div>
         </div>
