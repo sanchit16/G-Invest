@@ -85,7 +85,7 @@ export default function DiscoverPage() {
 
   return (
     <div className="flex flex-1 flex-col bg-slate-50/50 dark:bg-slate-900/50">
-      <Header title="Discover" />
+      <Header title="Trading Playground" />
       <main className="flex-1 p-4 md:p-6 space-y-2">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
