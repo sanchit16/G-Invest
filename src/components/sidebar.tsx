@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bot, BookOpen, HelpCircle, LayoutDashboard, DollarSign, Search, Compass, Award } from 'lucide-react';
+import { Bot, BookOpen, HelpCircle, LayoutDashboard, DollarSign, Search, Compass, Award, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -14,6 +14,7 @@ const navItems = [
   { href: '/quizzes', icon: HelpCircle, label: 'Quizzes' },
   { href: '/search', icon: Search, label: 'Concept Search' },
   { href: '/certificate', icon: Award, label: 'Certificate' },
+  { href: '/how-it-works', icon: Info, label: 'How AI Works' },
 ];
 
 export default function Sidebar() {
