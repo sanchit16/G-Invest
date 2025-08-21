@@ -12,7 +12,6 @@ const navItems = [
   { href: '/discover', icon: Compass, label: 'Discover' },
   { href: '/lessons', icon: BookOpen, label: 'AI Tutor' },
   { href: '/quizzes', icon: HelpCircle, label: 'Quizzes' },
-  { href: '/search', icon: Search, label: 'Concept Search' },
   { href: '/chat', icon: MessageSquare, label: 'Market Chat' },
   { href: '/certificate', icon: Award, label: 'Certificate' },
 ];
