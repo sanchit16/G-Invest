@@ -1,12 +1,12 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { BookOpen, CheckCircle, Bot, Sparkles, AlertTriangle, Info, Lock } from 'lucide-react';
+import { BookOpen, CheckCircle, Bot, Sparkles, AlertTriangle, Info, Lock, HelpCircle } from 'lucide-react';
 import { financialTutorChat } from '@/ai/flows/financial-tutor-chat';
+import { useRouter } from 'next/navigation';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
@@ -70,7 +70,7 @@ const hardcodedCurriculum: Curriculum = {
             title: "How Stock Prices Are Determined",
             content: "Stock prices are determined by the collective decisions of buyers and sellers. When more people want to buy a stock than sell it, demand exceeds supply, and the price goes up. When more want to sell, supply exceeds demand, and the price goes down. This dynamic is influenced by **fundamental factors** (like company earnings and profitability) and **technical factors** (like market sentiment and historical chart patterns).",
             duration: "9min",
-            completed: true,
+            completed: false,
         },
     ],
     advanced: [
@@ -89,26 +89,45 @@ const hardcodedCurriculum: Curriculum = {
     ]
 };
 
-const LessonList = ({ lessons }: { lessons: Lesson[] }) => (
-    <Accordion type="single" collapsible className="w-full">
-        {lessons.map((lesson, index) => (
-            <AccordionItem value={`item-${index}`} key={index}>
-                <AccordionTrigger className="text-lg font-semibold hover:no-underline text-left">
-                    <div className="flex-1 text-left flex items-center gap-3">
-                        {lesson.completed && <CheckCircle className="h-5 w-5 text-secondary" />}
-                        <span>{lesson.title}</span>
+const LessonList = ({ lessons, level, onTakeQuiz }: { lessons: Lesson[], level: string, onTakeQuiz: (level: string) => void }) => {
+    const allLessonsCompleted = lessons.every(l => l.completed);
+
+    return (
+        <div>
+            <Accordion type="single" collapsible className="w-full">
+                {lessons.map((lesson, index) => (
+                    <AccordionItem value={`item-${index}`} key={index}>
+                        <AccordionTrigger className="text-lg font-semibold hover:no-underline text-left">
+                            <div className="flex-1 text-left flex items-center gap-3">
+                                {lesson.completed && <CheckCircle className="h-5 w-5 text-secondary" />}
+                                <span>{lesson.title}</span>
+                            </div>
+                            <div className="text-sm font-normal text-muted-foreground ml-4 shrink-0">
+                                1 lecture &bull; {lesson.duration}
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="prose dark:prose-invert max-w-none">
+                            <p className="whitespace-pre-wrap">{lesson.content}</p>
+                        </AccordionContent>
+                    </AccordionItem>
+                ))}
+            </Accordion>
+            {allLessonsCompleted && (
+                <div className="mt-6 p-4 bg-primary/10 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h3 className="font-bold text-lg">Congratulations!</h3>
+                        <p className="text-muted-foreground">You've completed all the {level} lessons. Pass the quiz to unlock the next level.</p>
                     </div>
-                    <div className="text-sm font-normal text-muted-foreground ml-4 shrink-0">
-                        1 lecture &bull; {lesson.duration}
-                    </div>
-                </AccordionTrigger>
-                <AccordionContent className="prose dark:prose-invert max-w-none">
-                    <p className="whitespace-pre-wrap">{lesson.content}</p>
-                </AccordionContent>
-            </AccordionItem>
-        ))}
-    </Accordion>
-);
+                    <Button onClick={() => onTakeQuiz(level)}>
+                        <HelpCircle className="mr-2 h-4 w-4" />
+                        Take {level.charAt(0).toUpperCase() + level.slice(1)} Quiz
+                    </Button>
+                </div>
+            )}
+        </div>
+    );
+};
+
 
 const chatFormSchema = z.object({
   question: z.string().min(10, 'Your question must be at least 10 characters.'),
@@ -221,6 +240,8 @@ const ChatTutor = () => {
 export default function AITutorClient() {
     const [knowledgeLevel, setKnowledgeLevel] = useState('beginner');
     const [curriculum] = useState<Curriculum>(hardcodedCurriculum);
+    const [completedQuizzes, setCompletedQuizzes] = useState<string[]>([]);
+    const router = useRouter();
 
     useEffect(() => {
         const storedAnswers = localStorage.getItem('onboardingAnswers');
@@ -228,19 +249,25 @@ export default function AITutorClient() {
             const answers = JSON.parse(storedAnswers);
             setKnowledgeLevel(answers.knowledge?.id || 'beginner');
         }
+
+        const storedQuizzes = localStorage.getItem('g-invest-quiz-completed');
+        if (storedQuizzes) {
+            setCompletedQuizzes(JSON.parse(storedQuizzes));
+        }
     }, []);
+    
+    const handleTakeQuiz = (level: string) => {
+        router.push(`/quizzes?level=${level}`);
+    };
 
-    const isBeginnerCompleted = curriculum.beginner.every(l => l.completed);
-    const isIntermediateCompleted = curriculum.intermediate.every(l => l.completed);
+    const isBeginnerLessonsCompleted = curriculum.beginner.every(l => l.completed);
+    const isIntermediateLessonsCompleted = curriculum.intermediate.every(l => l.completed);
 
-    const availableLevels = {
-        beginner: ['beginner', 'intermediate', 'advanced'],
-        intermediate: ['intermediate', 'advanced'],
-        advanced: ['advanced'],
-    }[knowledgeLevel] || ['beginner', 'intermediate', 'advanced'];
-
-    const isIntermediateLocked = knowledgeLevel === 'beginner' && !isBeginnerCompleted;
-    const isAdvancedLocked = (knowledgeLevel === 'beginner' && !isIntermediateCompleted) || (knowledgeLevel === 'intermediate' && !isIntermediateCompleted);
+    const isBeginnerQuizPassed = completedQuizzes.includes('beginner');
+    const isIntermediateQuizPassed = completedQuizzes.includes('intermediate');
+    
+    const isIntermediateLocked = !isBeginnerLessonsCompleted || !isBeginnerQuizPassed;
+    const isAdvancedLocked = !isIntermediateLessonsCompleted || !isIntermediateQuizPassed;
     
     return (
         <div className="space-y-6">
@@ -251,49 +278,39 @@ export default function AITutorClient() {
                         Stock Market Fundamentals
                     </CardTitle>
                     <CardDescription>
-                        Your personalized curriculum based on your progress. Select a level to view your lessons.
+                        Your personalized curriculum. Complete all lessons and pass the quiz to unlock the next level.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Tabs defaultValue={knowledgeLevel} className="w-full">
                         <TabsList className="grid w-full grid-cols-3">
-                            {availableLevels.includes('beginner') && <TabsTrigger value="beginner">Beginner</TabsTrigger>}
-                            {availableLevels.includes('intermediate') && (
-                                <TabsTrigger value="intermediate" disabled={isIntermediateLocked} className="relative">
-                                    {isIntermediateLocked && <Lock className="absolute left-2 h-4 w-4" />}
-                                    Intermediate
-                                </TabsTrigger>
-                            )}
-                            {availableLevels.includes('advanced') && (
-                                <TabsTrigger value="advanced" disabled={isAdvancedLocked} className="relative">
-                                     {isAdvancedLocked && <Lock className="absolute left-2 h-4 w-4" />}
-                                    Advanced
-                                </TabsTrigger>
-                            )}
+                           <TabsTrigger value="beginner">Beginner</TabsTrigger>
+                           <TabsTrigger value="intermediate" disabled={isIntermediateLocked} className="relative">
+                                {isIntermediateLocked && <Lock className="absolute left-2 h-4 w-4" />}
+                                Intermediate
+                            </TabsTrigger>
+                            <TabsTrigger value="advanced" disabled={isAdvancedLocked} className="relative">
+                                 {isAdvancedLocked && <Lock className="absolute left-2 h-4 w-4" />}
+                                Advanced
+                            </TabsTrigger>
                         </TabsList>
-                        {availableLevels.includes('beginner') && (
-                            <TabsContent value="beginner" className="mt-4">
-                                <LessonList lessons={curriculum.beginner} />
-                            </TabsContent>
-                        )}
-                        {availableLevels.includes('intermediate') && (
-                            <TabsContent value="intermediate" className="mt-4">
-                                {isIntermediateLocked ? (
-                                    <div className="text-center p-8 text-muted-foreground">Complete the Beginner section to unlock Intermediate lessons.</div>
-                                ) : (
-                                    <LessonList lessons={curriculum.intermediate} />
-                                )}
-                            </TabsContent>
-                        )}
-                        {availableLevels.includes('advanced') && (
-                             <TabsContent value="advanced" className="mt-4">
-                                {isAdvancedLocked ? (
-                                     <div className="text-center p-8 text-muted-foreground">Complete the Intermediate section to unlock Advanced lessons.</div>
-                                ) : (
-                                     <LessonList lessons={curriculum.advanced} />
-                                )}
-                            </TabsContent>
-                        )}
+                        <TabsContent value="beginner" className="mt-4">
+                            <LessonList lessons={curriculum.beginner} level="beginner" onTakeQuiz={handleTakeQuiz} />
+                        </TabsContent>
+                        <TabsContent value="intermediate" className="mt-4">
+                            {isIntermediateLocked ? (
+                                <div className="text-center p-8 text-muted-foreground">Complete the Beginner lessons and pass the quiz to unlock this section.</div>
+                            ) : (
+                                <LessonList lessons={curriculum.intermediate} level="intermediate" onTakeQuiz={handleTakeQuiz} />
+                            )}
+                        </TabsContent>
+                         <TabsContent value="advanced" className="mt-4">
+                            {isAdvancedLocked ? (
+                                 <div className="text-center p-8 text-muted-foreground">Complete the Intermediate lessons and pass the quiz to unlock this section.</div>
+                            ) : (
+                                 <LessonList lessons={curriculum.advanced} level="advanced" onTakeQuiz={handleTakeQuiz}/>
+                            )}
+                        </TabsContent>
                     </Tabs>
                 </CardContent>
             </Card>
