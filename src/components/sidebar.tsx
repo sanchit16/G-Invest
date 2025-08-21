@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bot, BookOpen, HelpCircle, LayoutDashboard, DollarSign, Compass, Award, MessageSquare } from 'lucide-react';
+import { Bot, BookOpen, HelpCircle, LayoutDashboard, DollarSign, Compass, Award } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -12,7 +12,6 @@ const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { href: '/discover', icon: Compass, label: 'Discover' },
   { href: '/quizzes', icon: HelpCircle, label: 'Quizzes' },
-  { href: '/chat', icon: MessageSquare, label: 'Market Chat' },
   { href: '/certificate', icon: Award, label: 'Certificate' },
 ];
 
