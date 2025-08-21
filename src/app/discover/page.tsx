@@ -44,7 +44,6 @@ export default function DiscoverPage() {
   const [searchResults, setSearchResults] = useState<Stock[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [apiKey, setApiKey] = useState<string>('');
   const { toast } = useToast();
 
   const handleStockSelect = (stock: Stock) => {
@@ -52,15 +51,6 @@ export default function DiscoverPage() {
   };
 
   const performSearch = async (query: string) => {
-    if (!apiKey) {
-      toast({
-          title: "API Key Required",
-          description: "Please enter your Generative AI API key to use the search functionality.",
-          variant: "destructive",
-      });
-      return;
-    }
-
     if (query.length < 2) {
       setSearchResults([]);
       setIsSearching(false);
@@ -68,7 +58,6 @@ export default function DiscoverPage() {
     }
     setIsSearching(true);
     try {
-      (window as any).__GEMINI_API_KEY = apiKey;
       const result = await stockSearch({ query });
       setSearchResults(result.results);
     } catch (error: any) {
@@ -84,7 +73,7 @@ export default function DiscoverPage() {
     }
   };
 
-  const debouncedSearch = useMemo(() => debounce(performSearch, 300), [apiKey, toast]);
+  const debouncedSearch = useMemo(() => debounce(performSearch, 300), [toast]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
@@ -98,16 +87,6 @@ export default function DiscoverPage() {
     <div className="flex flex-1 flex-col bg-slate-50/50 dark:bg-slate-900/50">
       <Header title="Discover" />
       <main className="flex-1 p-4 md:p-6 space-y-2">
-        <div className="flex items-center gap-2 mb-4">
-            <KeyRound className="h-5 w-5 text-muted-foreground" />
-            <Input 
-                type="password"
-                placeholder="Enter your Generative AI API Key to enable search"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                className="text-base"
-            />
-        </div>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
