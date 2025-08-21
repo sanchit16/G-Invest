@@ -84,7 +84,7 @@ export default function DiscoverPage() {
     }
   };
 
-  const debouncedSearch = useMemo(() => debounce(performSearch, 300), [apiKey]);
+  const debouncedSearch = useMemo(() => debounce(performSearch, 300), [apiKey, toast]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
